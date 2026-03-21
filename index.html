@@ -8,40 +8,41 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Lato:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
 <style>
 :root {
-  /* Purple scale */
   --p50:  #EAE8F8;
   --p200: #A8A0E8;
   --p400: #7B6FD4;
   --p600: #5040A8;
   --p800: #332880;
-  /* Seafoam/aqua — replaces ALL blush/pink */
   --pk50:  #E4F8F5;
   --pk200: #7DD4C8;
   --pk400: #4FBFB0;
-  /* Holographic accent */
   --gold:  #D4B86A;
   --holo: linear-gradient(135deg, #A8A0E8 0%, #7B6FD4 20%, #5BB8D4 40%, #7DD4C8 60%, #C8F08A 85%, #D4B86A 100%);
-  /* Surfaces — mid-tone muted lavender */
   --bg:   #130e2e;
   --surf: rgba(255,255,255,0.09);
   --surf2: rgba(160,148,240,0.12);
-  /* Text */
   --ink:  #f0ecff;
   --muted:rgba(210,204,255,0.80);
-  /* Borders */
   --bdr:  rgba(160,148,240,0.22);
   --bdr2: rgba(160,148,240,0.42);
-  /* Shadows */
   --shadow: 0 4px 24px rgba(80,60,180,0.35);
   --shadow-lg: 0 12px 48px rgba(80,60,180,0.5);
   --radius: 20px;
   --radius-sm: 12px;
+
+  /* ── INPUT SYSTEM — used everywhere ── */
+  --inp-bg:    rgba(240,236,255,0.95);
+  --inp-bg-focus: rgba(250,248,255,1);
+  --inp-text:  #1e1640;
+  --inp-placeholder: rgba(80,60,150,0.55);
+  --inp-border: rgba(160,148,240,0.38);
+  --inp-border-focus: #7B6FD4;
+  --inp-shadow-focus: 0 0 0 3px rgba(123,111,212,0.22);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:'Lato',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding-bottom:80px;font-weight:400}
 
-/* ── Deep cosmic purple background ── */
 body::before{content:'';position:fixed;inset:0;background:
   radial-gradient(ellipse 70% 55% at 5%  0%,   rgba(100,80,200,0.55) 0%, transparent 55%),
   radial-gradient(ellipse 55% 50% at 95% 5%,   rgba(60,180,200,0.18) 0%, transparent 50%),
@@ -50,7 +51,6 @@ body::before{content:'';position:fixed;inset:0;background:
   radial-gradient(ellipse 35% 35% at 50% 50%,  rgba(120,100,220,0.15) 0%, transparent 65%);
 pointer-events:none;z-index:0}
 
-/* ── Glitter sparkle texture ── */
 body::after{content:'';position:fixed;inset:0;
 background-image:
   radial-gradient(1.5px 1.5px at 8%  12%, rgba(255,255,255,0.85) 0%, transparent 100%),
@@ -133,6 +133,15 @@ pointer-events:none;z-index:0;animation:glitter 5s ease-in-out infinite alternat
   font-family:'Montserrat',sans-serif;letter-spacing:.5px
 }
 
+/* MRR Growth bar — special gold accent */
+.mrr-bar-fill{
+  background:linear-gradient(90deg,#D4B86A,#f0d080,#4FBFB0) !important;
+}
+.mrr-val-highlight{
+  color:#D4B86A !important;
+  font-weight:900 !important;
+}
+
 /* ══════════════════════════════════════
    HEADER
 ══════════════════════════════════════ */
@@ -145,7 +154,6 @@ pointer-events:none;z-index:0;animation:glitter 5s ease-in-out infinite alternat
   letter-spacing:2px;
   line-height:1.1;
   margin-bottom:10px;
-  /* Holographic gradient — mimics the VBD banner text */
   background:linear-gradient(135deg, #A8A0E8 0%, #7B6FD4 18%, #5BB8D4 38%, #7DD4C8 55%, #C8F08A 78%, #D4B86A 100%);
   background-size:200% 200%;
   -webkit-background-clip:text;
@@ -220,7 +228,6 @@ pointer-events:none;z-index:0;animation:glitter 5s ease-in-out infinite alternat
   background:linear-gradient(180deg,var(--p400),#4FBFB0);
   border-radius:4px 0 0 4px
 }
-/* All card variants — same dark base, different accent stripe only */
 .card.pink{background:rgba(30,20,70,0.72)}
 .card.pink::before{background:linear-gradient(180deg,#4FBFB0,#7DD4C8)}
 .card.lavender{background:rgba(30,20,70,0.72)}
@@ -229,7 +236,6 @@ pointer-events:none;z-index:0;animation:glitter 5s ease-in-out infinite alternat
 .card.win::before{background:linear-gradient(180deg,#4FBFB0,var(--p400))}
 .card.plain::before{display:none}
 
-/* Step label for morning redesign */
 .step-label{
   font-family:'Montserrat',sans-serif;font-size:.6em;font-weight:900;
   letter-spacing:2.5px;text-transform:uppercase;
@@ -254,31 +260,75 @@ pointer-events:none;z-index:0;animation:glitter 5s ease-in-out infinite alternat
 .sh::after{content:'';flex:1;height:1.5px;background:linear-gradient(90deg,var(--bdr2),transparent)}
 
 /* ══════════════════════════════════════
-   FORM ELEMENTS
+   GLOBAL INPUT / TEXTAREA / SELECT
+   Single source of truth — no conflicts
 ══════════════════════════════════════ */
 label.fl{
   display:block;font-size:.72em;font-weight:700;
   font-family:'Montserrat',sans-serif;
   color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px
 }
-textarea,input[type=text],input[type=number],input[type=url],input[type=date]{
-  width:100%;padding:11px 14px;
-  border:1.5px solid rgba(160,148,240,0.3);
+
+/* Base styles for ALL text inputs, textareas, number inputs, url/date inputs */
+textarea,
+input[type=text],
+input[type=number],
+input[type=url],
+input[type=date] {
+  width:100%;
+  padding:11px 14px;
+  border:1.5px solid var(--inp-border);
   border-radius:var(--radius-sm);
-  font-family:'Lato',sans-serif;font-size:.93em;
-  color:#1e1640;
-  background:rgba(235,230,255,0.92);
-  transition:border-color .2s,box-shadow .2s;outline:none;
-  font-weight:400
+  font-family:'Lato',sans-serif;
+  font-size:.93em;
+  color: var(--inp-text);
+  background: var(--inp-bg);
+  transition:border-color .2s, box-shadow .2s, background .2s;
+  outline:none;
+  font-weight:400;
 }
-textarea::placeholder,input::placeholder{color:rgba(100,90,160,0.6)}
-textarea:focus,input:focus{
-  border-color:var(--p400);
-  box-shadow:0 0 0 3px rgba(123,111,212,0.2);
-  background:rgba(245,242,255,0.97)
+textarea::placeholder,
+input[type=text]::placeholder,
+input[type=number]::placeholder,
+input[type=url]::placeholder,
+input[type=date]::placeholder {
+  color: var(--inp-placeholder);
+  opacity: 1;
+}
+textarea:focus,
+input[type=text]:focus,
+input[type=number]:focus,
+input[type=url]:focus,
+input[type=date]:focus {
+  border-color: var(--inp-border-focus);
+  box-shadow: var(--inp-shadow-focus);
+  background: var(--inp-bg-focus);
+  color: var(--inp-text);
 }
 textarea{resize:vertical;min-height:100px;line-height:1.65}
-textarea:focus,input:focus{border-color:var(--p400);box-shadow:0 0 0 3px rgba(127,119,221,0.12);background:rgba(255,255,255,0.14)}
+
+/* select elements */
+select {
+  color: var(--inp-text);
+  background: var(--inp-bg);
+  border: 1.5px solid var(--inp-border);
+  border-radius: var(--radius-sm);
+  font-family: 'Lato', sans-serif;
+  font-size: .88em;
+  padding: 8px 10px;
+  outline: none;
+  cursor: pointer;
+}
+select:focus {
+  border-color: var(--inp-border-focus);
+  box-shadow: var(--inp-shadow-focus);
+}
+/* Make option text legible in dropdowns */
+select option {
+  background: #1e1640;
+  color: #f0ecff;
+}
+
 .field{margin-bottom:16px}
 
 /* ══════════════════════════════════════
@@ -308,14 +358,28 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
    NUM GRID
 ══════════════════════════════════════ */
 .num-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px;margin:12px 0}
-.nc{background:rgba(255,255,255,0.07);border-radius:var(--radius-sm);padding:14px;border:1.5px solid var(--bdr)}
+.nc{
+  background:rgba(255,255,255,0.07);
+  border-radius:var(--radius-sm);padding:14px;
+  border:1.5px solid var(--bdr)
+}
 .nc label{
   display:block;font-size:.66em;font-weight:700;
   font-family:'Montserrat',sans-serif;
   color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px
 }
-.nc input[type=number]{text-align:center;font-size:1.1em;font-weight:700;color:#1e1640;background:rgba(235,230,255,0.92);padding:8px;border-radius:8px;border:1.5px solid rgba(160,148,240,0.3)}
-.nc select{width:100%;margin-top:6px;padding:6px 8px;border:1px solid rgba(160,148,240,0.3);border-radius:8px;font-family:"Lato",sans-serif;font-size:.8em;background:rgba(235,230,255,0.92);color:#1e1640}
+.nc input[type=number]{
+  text-align:center;font-size:1.1em;font-weight:700;
+  color:var(--inp-text);background:var(--inp-bg);
+  padding:8px;border-radius:8px;border:1.5px solid var(--inp-border);
+  width:100%
+}
+.nc input[type=number]:focus{
+  border-color:var(--inp-border-focus);
+  box-shadow:var(--inp-shadow-focus);
+  background:var(--inp-bg-focus);
+}
+.nc select{width:100%;margin-top:6px}
 
 /* ══════════════════════════════════════
    PILLS
@@ -344,7 +408,7 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 }
 .day-nav button{
   margin:0;padding:7px 16px;font-size:.72em;
-  background:rgba(235,230,255,0.92);color:#1e1640;
+  background:var(--inp-bg);color:var(--inp-text);
   border:1.5px solid var(--bdr);box-shadow:none
 }
 .day-nav button:hover{color:var(--p400);border-color:var(--p400);transform:none;box-shadow:none;background:var(--p50)}
@@ -368,9 +432,9 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
   border:1.5px solid var(--bdr2);
   border-radius:var(--radius-sm);padding:22px;
   font-family:'Lato',sans-serif;font-size:.92em;line-height:1.85;
-  color:var(--ink);margin:14px 0
+  color:#1e1640;margin:14px 0
 }
-.post-box p{margin-bottom:4px}
+.post-box p{margin-bottom:4px;color:#1e1640}
 
 /* ══════════════════════════════════════
    INFO BOX
@@ -419,8 +483,21 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 .check-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bdr)}
 .check-row:last-child{border-bottom:none}
 .check-row input[type=checkbox]{width:20px;height:20px;accent-color:var(--p400);flex-shrink:0;cursor:pointer}
-.check-row input[type=text]{flex:1;border:none;border-bottom:1.5px solid rgba(160,148,240,0.3);background:rgba(235,230,255,0.92);padding:6px 10px;border-radius:6px;font-size:.93em;color:#1e1640}
-.check-row input[type=text]:focus{border-color:var(--p400);box-shadow:0 0 0 2px rgba(123,111,212,0.2);background:rgba(245,242,255,0.97)}
+.check-row input[type=text]{
+  flex:1;border:none;
+  border-bottom:1.5px solid var(--inp-border);
+  background:var(--inp-bg);
+  padding:6px 10px;
+  border-radius:6px;
+  font-size:.93em;
+  color:var(--inp-text);
+}
+.check-row input[type=text]:focus{
+  border-color:var(--inp-border-focus);
+  box-shadow:var(--inp-shadow-focus);
+  background:var(--inp-bg-focus)
+}
+.check-row input[type=text]::placeholder{color:var(--inp-placeholder)}
 
 /* ══════════════════════════════════════
    PROGRESS GRID (28-day map)
@@ -474,7 +551,12 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 .ba-key{color:rgba(210,204,255,0.85);font-weight:300}
 .ba-val{font-weight:700;color:#f0ecff;font-family:'Montserrat',sans-serif;font-size:.92em}
 .ba-diff{font-size:.75em;font-weight:800;padding:2px 9px;border-radius:8px;font-family:'Montserrat',sans-serif}
-.ba-input:focus{border-color:var(--p400)!important;outline:none;box-shadow:0 0 0 3px rgba(127,119,221,0.12)}
+.ba-input{
+  color:var(--inp-text) !important;
+  background:var(--inp-bg) !important;
+  border:1.5px solid var(--inp-border) !important;
+}
+.ba-input:focus{border-color:var(--inp-border-focus)!important;outline:none;box-shadow:var(--inp-shadow-focus)}
 .ba-diff.pos{background:rgba(127,119,221,.15);color:var(--p600)}
 .ba-diff.neg{background:rgba(79,191,176,.1);color:#4FBFB0}
 .ba-diff.zero{background:rgba(127,119,221,.08);color:var(--muted)}
@@ -488,10 +570,10 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
   padding:16px 18px;margin-bottom:10px;position:relative
 }
 .win-date{
-  font-family:'Montserrat',sans-serif;font-size:.66em;color:var(--muted);
+  font-family:'Montserrat',sans-serif;font-size:.66em;color:#5040A8;
   font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px
 }
-.win-text{font-size:.9em;color:#f0ecff;line-height:1.65;font-weight:400}
+.win-text{font-size:.9em;color:#1e1640;line-height:1.65;font-weight:600}
 .win-star{position:absolute;top:14px;right:16px;font-size:1.1em}
 
 /* ══════════════════════════════════════
@@ -501,7 +583,9 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 .e-btn{
   padding:8px 14px;border-radius:20px;font-size:.8em;font-weight:700;
   font-family:'Montserrat',sans-serif;
-  border:1.5px solid var(--bdr);background:rgba(235,230,255,0.92);color:#1e1640;
+  border:1.5px solid var(--bdr);
+  background:var(--inp-bg);
+  color:var(--inp-text);
   cursor:pointer;transition:all .18s;margin:0;text-transform:uppercase;letter-spacing:.3px
 }
 .e-btn:hover{border-color:var(--p400);color:var(--p400);transform:none;box-shadow:none;background:var(--p50)}
@@ -578,7 +662,11 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
    SHARE ROW
 ══════════════════════════════════════ */
 .share-row{display:flex;gap:8px;margin-top:10px}
-.share-row input{flex:1;font-family:monospace;font-size:.75em;background:rgba(235,230,255,0.92);color:#1e1640;border-radius:var(--radius-sm)}
+.share-row input{
+  flex:1;font-family:monospace;font-size:.75em;
+  background:var(--inp-bg);color:var(--inp-text);
+  border-radius:var(--radius-sm)
+}
 .share-row button{margin:0;white-space:nowrap;padding:10px 18px;font-size:.78em}
 
 /* ══════════════════════════════════════
@@ -609,7 +697,12 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
   font-family:'Montserrat',sans-serif;font-size:.66em;font-weight:700;
   text-transform:uppercase;letter-spacing:.8px;min-width:96px;color:var(--muted)
 }
-.lt-field input{flex:1;font-size:.82em;padding:6px 10px;background:rgba(235,230,255,0.92)}
+.lt-field input{
+  flex:1;font-size:.82em;padding:6px 10px;
+  background:var(--inp-bg);color:var(--inp-text);
+  border:1.5px solid var(--inp-border);border-radius:6px
+}
+.lt-field input:focus{border-color:var(--inp-border-focus);box-shadow:var(--inp-shadow-focus)}
 .lt-link{
   font-family:'Montserrat',sans-serif;font-size:.7em;font-weight:700;text-decoration:none;
   padding:4px 11px;border-radius:8px;background:var(--surf2);border:1px solid var(--bdr);
@@ -678,7 +771,6 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 .dc-label .dc-count{font-size:.8em;color:rgba(210,204,255,0.7);font-weight:700;letter-spacing:0}
 .dc-progress{height:3px;background:rgba(160,148,240,0.15);border-radius:2px;margin-bottom:10px;overflow:hidden}
 .dc-progress-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--p400),#4FBFB0);transition:width .4s ease}
-/* ── TASK PILLS ── */
 .dc-tasks{list-style:none;margin-bottom:8px;display:flex;flex-direction:column;gap:5px}
 .dc-task-item{
   display:flex;align-items:center;gap:8px;
@@ -711,15 +803,16 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 .dc-add-row{display:flex;gap:6px;margin-top:8px}
 .dc-add-input{
   flex:1;
-  background:rgba(235,230,255,0.92);
-  border:1.5px solid rgba(160,148,240,0.4);
-  border-radius:20px;color:#1e1640;
+  background:var(--inp-bg);
+  border:1.5px solid var(--inp-border);
+  border-radius:20px;
+  color:var(--inp-text);
   font-family:'Lato',sans-serif;font-size:.82em;font-weight:600;
   padding:7px 14px;outline:none;min-width:0;
   transition:border-color .2s,box-shadow .2s
 }
-.dc-add-input::placeholder{color:rgba(80,70,140,0.55)}
-.dc-add-input:focus{border-color:var(--p400);box-shadow:0 0 0 3px rgba(123,111,212,0.2)}
+.dc-add-input::placeholder{color:var(--inp-placeholder)}
+.dc-add-input:focus{border-color:var(--inp-border-focus);box-shadow:var(--inp-shadow-focus)}
 .dc-add-btn{
   width:30px;height:30px;
   background:linear-gradient(135deg,var(--p400),var(--p600));
@@ -732,6 +825,7 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 
 /* ══════════════════════════════════════
    IDEA VAULT — NEW TAB
+   (fully fixed — readable inputs on dark bg)
 ══════════════════════════════════════ */
 .idea-layout{display:grid;grid-template-columns:260px 1fr;gap:20px;align-items:start}
 @media(max-width:700px){.idea-layout{grid-template-columns:1fr}}
@@ -769,20 +863,38 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 }
 .idea-form-label{
   display:block;font-size:.68em;font-weight:700;
-  font-family:'Montserrat',sans-serif;color:var(--muted);
+  font-family:'Montserrat',sans-serif;color:rgba(210,204,255,0.9);
   text-transform:uppercase;letter-spacing:1px;margin-bottom:5px
 }
-.idea-form-input,.idea-form-select,.idea-form-textarea{
-  width:100%;padding:9px 12px;border:1.5px solid var(--bdr);
-  border-radius:var(--radius-sm);font-family:'Lato',sans-serif;
-  font-size:.88em;color:var(--ink);background:var(--surf2);
-  outline:none;transition:border-color .2s
+
+/* Idea Vault inputs — use the global input system */
+.idea-form-input,
+.idea-form-select,
+.idea-form-textarea{
+  width:100%;
+  padding:9px 12px;
+  border:1.5px solid var(--inp-border);
+  border-radius:var(--radius-sm);
+  font-family:'Lato',sans-serif;
+  font-size:.88em;
+  color:var(--inp-text);
+  background:var(--inp-bg);
+  outline:none;
+  transition:border-color .2s, box-shadow .2s, background .2s;
 }
 .idea-form-textarea{resize:vertical;min-height:72px;line-height:1.55}
-.idea-form-input:focus,.idea-form-select:focus,.idea-form-textarea:focus{
-  border-color:var(--p400);box-shadow:0 0 0 3px rgba(127,119,221,0.1);background:var(--surf)
+.idea-form-input:focus,
+.idea-form-select:focus,
+.idea-form-textarea:focus{
+  border-color:var(--inp-border-focus);
+  box-shadow:var(--inp-shadow-focus);
+  background:var(--inp-bg-focus);
 }
-.idea-form-input::placeholder,.idea-form-textarea::placeholder{color:var(--muted);opacity:.55}
+.idea-form-input::placeholder,
+.idea-form-textarea::placeholder{
+  color:var(--inp-placeholder);
+  opacity:1;
+}
 .idea-form-row{margin-bottom:11px}
 .idea-submit-btn{
   width:100%;font-family:'Montserrat',sans-serif;font-size:.72em;
@@ -843,22 +955,23 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 .idea-status-sel{
   margin-left:auto;font-family:'Montserrat',sans-serif;font-size:.62em;
   font-weight:700;padding:3px 8px;border-radius:20px;
-  border:1.5px solid var(--bdr);background:var(--surf2);
-  color:var(--muted);cursor:pointer;outline:none;transition:border-color .15s
+  border:1.5px solid var(--bdr);
+  background:var(--inp-bg);
+  color:var(--inp-text);
+  cursor:pointer;outline:none;transition:border-color .15s
 }
-.idea-status-sel:focus{border-color:var(--p400)}
+.idea-status-sel:focus{border-color:var(--inp-border-focus)}
 .idea-card-date{font-size:.62em;color:var(--muted);opacity:.7}
 .idea-empty{text-align:center;padding:50px 20px;color:var(--muted)}
 .idea-empty .ie-icon{font-size:2em;margin-bottom:10px;opacity:.4}
 .idea-empty p{font-size:.85em;font-weight:300;font-style:italic}
 
 /* ══════════════════════════════════════
-   MEMBER GROWTH TRACKER — NEW TAB
+   MEMBER GROWTH TRACKER
 ══════════════════════════════════════ */
 .mg-layout{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start}
 @media(max-width:800px){.mg-layout{grid-template-columns:1fr}}
 
-/* KPI strip */
 .mg-kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:22px}
 .mg-kpi{
   background:rgba(255,255,255,0.07);
@@ -872,7 +985,6 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 }
 .mg-kpi-l{font-family:"Montserrat",sans-serif;font-size:.63em;color:rgba(210,204,255,0.9);font-weight:700;margin-top:4px;text-transform:uppercase;letter-spacing:1px}
 
-/* Log form */
 .mg-form-box{
   background:rgba(255,255,255,0.07);
   border:1px solid var(--bdr);border-radius:var(--radius);
@@ -883,7 +995,10 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
   letter-spacing:2px;text-transform:uppercase;color:var(--p400);margin-bottom:16px
 }
 .mg-source-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.mg-source-cell{background:rgba(255,255,255,0.08);border-radius:8px;border:1px solid rgba(160,148,240,0.22);padding:8px 10px}
+.mg-source-cell{
+  background:rgba(255,255,255,0.08);border-radius:8px;
+  border:1px solid rgba(160,148,240,0.22);padding:8px 10px
+}
 .mg-source-cell label{
   display:flex;align-items:center;gap:6px;font-size:.65em;font-weight:700;
   font-family:'Montserrat',sans-serif;color:var(--muted);text-transform:uppercase;
@@ -891,11 +1006,13 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 }
 .mg-source-cell .src-icon{font-size:1.1em}
 .mg-source-cell input{
-  width:100%;padding:5px 8px;border:1px solid var(--bdr);border-radius:6px;
+  width:100%;padding:5px 8px;
+  border:1px solid var(--inp-border);border-radius:6px;
   font-family:'Montserrat',sans-serif;font-size:.85em;font-weight:700;
-  color:#1e1640;background:rgba(235,230,255,0.92);text-align:center;outline:none
+  color:var(--inp-text);background:var(--inp-bg);
+  text-align:center;outline:none
 }
-.mg-source-cell input:focus{border-color:var(--p400)}
+.mg-source-cell input:focus{border-color:var(--inp-border-focus);box-shadow:var(--inp-shadow-focus)}
 .mg-spend-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .mg-log-btn{
   width:100%;font-family:'Montserrat',sans-serif;font-size:.72em;font-weight:900;
@@ -905,7 +1022,6 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 }
 .mg-log-btn:hover{transform:translateY(-2px)!important;box-shadow:0 8px 20px rgba(127,119,221,0.4)!important}
 
-/* Source leaderboard */
 .mg-leaderboard{margin-bottom:20px}
 .mg-lb-row{
   display:flex;align-items:center;gap:10px;padding:9px 0;
@@ -919,7 +1035,6 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 .mg-lb-val{font-family:'Montserrat',sans-serif;font-size:.72em;font-weight:900;color:var(--ink);min-width:28px;text-align:right}
 .mg-lb-cpl{font-family:'Montserrat',sans-serif;font-size:.65em;color:var(--muted);min-width:46px;text-align:right}
 
-/* Log table */
 .mg-log-table{width:100%;border-collapse:collapse;font-size:.78em}
 .mg-log-table th{
   font-family:'Montserrat',sans-serif;font-size:.62em;font-weight:800;
@@ -928,7 +1043,7 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 }
 .mg-log-table td{padding:8px 8px;border-bottom:1px solid rgba(160,148,240,0.2);color:#f0ecff;vertical-align:middle}
 .mg-log-table tr:last-child td{border-bottom:none}
-.mg-log-table tr:hover td{background:rgba(235,230,255,0.92)}
+.mg-log-table tr:hover td{background:rgba(255,255,255,0.04)}
 .mg-del-btn{
   background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85em;
   opacity:.3;padding:2px 4px;margin:0;transition:opacity .15s
@@ -1346,11 +1461,9 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
   <div class="sh">🌱 Member Growth Tracker</div>
   <div class="info-box">Log your Skool stats daily — 2 minutes. The system calculates your cost per member by channel so you know exactly where to put your ad spend.</div>
 
-  <!-- KPI Strip -->
   <div class="mg-kpi-row" id="mgKpiRow"></div>
 
   <div class="mg-layout">
-    <!-- Left: log table -->
     <div>
       <div class="sh" style="font-size:.85em;margin-top:0">📋 Daily Log</div>
       <div id="mgLogWrap">
@@ -1358,16 +1471,13 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
       </div>
     </div>
 
-    <!-- Right: form + leaderboard -->
     <div>
-      <!-- Source leaderboard -->
       <div class="card lavender" style="margin-bottom:16px">
         <div class="card-title">🏆 Source Leaderboard</div>
         <div class="card-sub">Total signups by channel since you started tracking</div>
         <div class="mg-leaderboard" id="mgLeaderboard"></div>
       </div>
 
-      <!-- Log form -->
       <div class="mg-form-box">
         <h3>✦ Log Today's Stats</h3>
 
@@ -1593,7 +1703,7 @@ function go(id, btn){
 }
 
 // ══════════════════════════════════════════════
-// MOMENTUM BAR
+// MOMENTUM BAR  (with MRR Growth tracker)
 // ══════════════════════════════════════════════
 var mbCollapsed = false;
 function toggleMB(){
@@ -1602,7 +1712,7 @@ function toggleMB(){
   ge('mbToggleBtn').textContent = mbCollapsed ? '▼ Expand' : '▲ Collapse';
 }
 function updateMomentumBar(){
-  // Streak — unlimited, no /28 cap
+  // Streak
   var streak=0, d=TODAY;
   while(true){
     var day=DB.days[d];
@@ -1621,7 +1731,7 @@ function updateMomentumBar(){
 
   var dates = Object.keys(DB.days).sort().reverse();
 
-  // Members — from Member Growth tab (latest entry) with fallback to check-in
+  // Members — latest from MG tab or check-in fallback
   var latestMembers = '—';
   var mgData = loadMGEntries ? loadMGEntries() : [];
   if(mgData.length){
@@ -1635,13 +1745,23 @@ function updateMomentumBar(){
     }
   }
 
-  // MRR — auto-pull from Member Growth tab (latest totalMembers × $8 as fallback, or stored MRR)
+  // MRR — pull from MG tab (stored MRR) or estimate from members × $8
   var latestMRR = '—';
+  var mrrBaseline = parseFloat(DB.profile.snap&&DB.profile.snap.mrr) || 0;
+  var mrrCurrent = 0;
   if(mgData.length){
     var sorted2 = mgData.slice().sort(function(a,b){return b.date.localeCompare(a.date);});
-    // Use stored MRR if available, else estimate from members
-    if(sorted2[0].mrr){ latestMRR = '$'+sorted2[0].mrr; }
-    else if(sorted2[0].totalMembers){ latestMRR = '$'+(parseInt(sorted2[0].totalMembers)*8).toLocaleString(); }
+    if(sorted2[0].mrr){ 
+      mrrCurrent = parseFloat(sorted2[0].mrr);
+      latestMRR = '$' + mrrCurrent.toLocaleString(); 
+    } else if(sorted2[0].totalMembers){ 
+      mrrCurrent = parseInt(sorted2[0].totalMembers)*8;
+      latestMRR = '$'+mrrCurrent.toLocaleString(); 
+    }
+  }
+  // Fallback: estimate from members × $8
+  if(mrrCurrent === 0 && latestMembers !== '—') {
+    mrrCurrent = parseInt(latestMembers) * 8;
   }
 
   var totalContent=0;
@@ -1659,17 +1779,26 @@ function updateMomentumBar(){
     return '<div class="mb-stat"><div class="mb-stat-n">'+s.n+'</div><div class="mb-stat-l">'+s.l+'</div></div>';
   }).join('');
 
-  var snapMembers = parseInt(DB.profile.snap.sk)||0;
+  // ── Progress bars ──
+  var snapMembers = parseInt(DB.profile.snap&&DB.profile.snap.sk)||0;
   var curMembers  = parseInt(latestMembers)||0;
   var memberGrowth = snapMembers>0 ? Math.max(0,curMembers-snapMembers) : 0;
   var memberPct    = snapMembers>0 ? Math.min(100,Math.round((memberGrowth/snapMembers)*100)) : 0;
   var contentPct   = Math.min(100,Math.round((totalContent/100)*100));
   var streakPct    = Math.min(100,Math.round((streak/30)*100));
 
+  // MRR growth bar
+  var mrrGrowth = mrrBaseline > 0 ? Math.max(0, mrrCurrent - mrrBaseline) : 0;
+  var mrrTarget  = mrrBaseline > 0 ? mrrBaseline * 2 : 5000; // target = 2x baseline or $5k if no baseline
+  if(mrrTarget === 0) mrrTarget = 5000;
+  var mrrPct = Math.min(100, Math.round((mrrGrowth / mrrTarget) * 100));
+  var mrrGrowthLabel = mrrGrowth > 0 ? '+$' + mrrGrowth.toLocaleString() : (latestMRR !== '—' ? latestMRR : '$0');
+
   ge('mbBars').innerHTML =
     '<div class="prog-row"><span class="prog-label">🔥 Streak</span><div class="prog-bar"><div class="prog-fill" style="width:'+streakPct+'%;background:linear-gradient(90deg,var(--p400),#4FBFB0)"></div></div><span class="prog-val">'+streak+' days</span></div>'+
     '<div class="prog-row"><span class="prog-label">✍️ Content</span><div class="prog-bar"><div class="prog-fill" style="width:'+contentPct+'%;background:linear-gradient(90deg,#4FBFB0,var(--p400))"></div></div><span class="prog-val">'+totalContent+'</span></div>'+
-    (snapMembers>0?'<div class="prog-row"><span class="prog-label">🌱 Member Growth</span><div class="prog-bar"><div class="prog-fill" style="width:'+memberPct+'%;background:linear-gradient(90deg,var(--p400),#7DD4C8)"></div></div><span class="prog-val">+'+memberGrowth+'</span></div>':'');
+    (snapMembers>0?'<div class="prog-row"><span class="prog-label">🌱 Member Growth</span><div class="prog-bar"><div class="prog-fill" style="width:'+memberPct+'%;background:linear-gradient(90deg,var(--p400),#7DD4C8)"></div></div><span class="prog-val">+'+memberGrowth+'</span></div>':'')+
+    '<div class="prog-row"><span class="prog-label">💰 MRR Growth</span><div class="prog-bar"><div class="prog-fill mrr-bar-fill" style="width:'+mrrPct+'%"></div></div><span class="prog-val mrr-val-highlight">'+mrrGrowthLabel+'</span></div>';
 }
 
 // ══════════════════════════════════════════════
@@ -1924,17 +2053,17 @@ function renderLT(){
   var rows='';
   for(var day=1;day<=28;day++){
     var dstr=getDayDateStr(day);
-    var cLink=dstr&&DB.days[dstr]?DB.days[dstr].checkin.contentLink||'':'';;
+    var cLink=dstr&&DB.days[dstr]?DB.days[dstr].checkin.contentLink||'':'';
     var sLink=dstr&&DB.days[dstr]?DB.days[dstr].skoolLink||'':'';
     var hasC=cLink.trim().length>0,hasS=sLink.trim().length>0;
     var bc=(hasC&&hasS)?'rgba(127,119,221,.4)':(hasC||hasS)?'rgba(127,119,221,.2)':'var(--bdr)';
     var pc=day<=7?'var(--p400)':day<=21?'#4FBFB0':'var(--p600)';
-    var dl=dstr?new Date(dstr+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';;
+    var dl=dstr?new Date(dstr+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
     rows+='<div class="lt-row" style="border-color:'+bc+'">'+
       '<div class="lt-head"><span class="lt-day" style="color:'+pc+'">Day '+day+'</span><span class="lt-date">'+dl+'</span><span style="margin-left:auto;font-size:.8em">'+(hasC&&hasS?'✅':(hasC||hasS)?'🔄':'')+'</span></div>'+
       '<div class="lt-body">'+
-      '<div class="lt-field"><span class="lt-lbl" style="color:var(--p400)">Content</span><input type="url" placeholder="Auto-fills from Check-In" value="'+(cLink.replace(/"/g,'&quot;'))+'" onchange="saveLTContent(\''+dstr+'\',this.value)" style="flex:1;font-size:.82em;padding:6px 10px;background:rgba(235,230,255,0.92);color:#1e1640;border-radius:6px">'+(hasC?'<a href="'+cLink+'" target="_blank" class="lt-link">View</a>':'')+'</div>'+
-      '<div class="lt-field"><span class="lt-lbl" style="color:#4FBFB0">Skool post</span><input type="url" placeholder="Paste after posting" value="'+(sLink.replace(/"/g,'&quot;'))+'" onchange="saveLTSkool('+(day)+',this.value,\''+dstr+'\')" style="flex:1;font-size:.82em;padding:6px 10px;background:rgba(235,230,255,0.92);color:#1e1640;border-radius:6px">'+(hasS?'<a href="'+sLink+'" target="_blank" class="lt-link">View</a>':'')+'</div>'+
+      '<div class="lt-field"><span class="lt-lbl" style="color:var(--p400)">Content</span><input type="url" placeholder="Auto-fills from Check-In" value="'+(cLink.replace(/"/g,'&quot;'))+'" onchange="saveLTContent(\''+dstr+'\',this.value)">'+(hasC?'<a href="'+cLink+'" target="_blank" class="lt-link">View</a>':'')+'</div>'+
+      '<div class="lt-field"><span class="lt-lbl" style="color:#4FBFB0">Skool post</span><input type="url" placeholder="Paste after posting" value="'+(sLink.replace(/"/g,'&quot;'))+'" onchange="saveLTSkool('+(day)+',this.value,\''+dstr+'\')">'+(hasS?'<a href="'+sLink+'" target="_blank" class="lt-link">View</a>':'')+'</div>'+
       '</div></div>';
   }
   ll.innerHTML=rows;
@@ -1980,7 +2109,7 @@ function renderBA(){
     if(diff!==null&&!isNaN(diff)){ var cls=diff>0?'pos':diff<0?'neg':'zero'; diffHtml=' <span class="ba-diff '+cls+'">'+(diff>0?'+':'')+diff+'</span>'; }
     bef+='<div class="ba-row"><span class="ba-key">'+f.key+'</span><span class="ba-val">'+s+'</span></div>';
     aft+='<div class="ba-row" style="gap:8px"><span class="ba-key" style="min-width:80px">'+f.key+'</span>'+
-         '<input type="number" class="ba-input" data-key="'+f.snapKey+'" placeholder="Enter current" value="'+c+'" oninput="saveCurrentSnap(\''+f.snapKey+'\',this.value)" style="width:90px;text-align:right;font-weight:700;font-size:.88em;padding:3px 8px;border:1.5px solid var(--bdr);border-radius:8px;background:rgba(235,230,255,0.92);color:#1e1640;font-family:Montserrat,sans-serif">'+diffHtml+'</div>';
+         '<input type="number" class="ba-input" data-key="'+f.snapKey+'" placeholder="Enter current" value="'+c+'" oninput="saveCurrentSnap(\''+f.snapKey+'\',this.value)" style="width:90px;text-align:right;font-weight:700;font-size:.88em;padding:3px 8px;border-radius:8px;font-family:Montserrat,sans-serif">'+diffHtml+'</div>';
   });
   ge('baGrid').innerHTML=
     '<div class="ba-card before"><div class="ba-label">📸 Day 1 Baseline</div>'+bef+'</div>'+
@@ -2059,10 +2188,10 @@ function openDayModal(ds){
   ge('modalBody').innerHTML=
     '<div style="font-family:Montserrat,sans-serif;font-size:1.15em;font-weight:900;background:linear-gradient(135deg,var(--p400),#4FBFB0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:14px;text-transform:uppercase;letter-spacing:1px">'+fmtLong(ds)+'</div>'+
     '<div style="display:flex;gap:6px;margin-bottom:16px">'+
-    (m.done?'<span style="background:linear-gradient(135deg,var(--p400),var(--p600));color:#fff;padding:4px 12px;border-radius:10px;font-size:.72em;font-weight:800;font-family:Montserrat,sans-serif;letter-spacing:.5px;text-transform:uppercase">🌅 Morning ✓</span>':'<span style="background:rgba(235,230,255,0.92);color:#1e1640;padding:4px 12px;border-radius:10px;font-size:.72em;font-weight:700;font-family:Montserrat,sans-serif">🌅 Morning —</span>')+
-    (e.done?'<span style="background:linear-gradient(135deg,#4FBFB0,var(--p400));color:#fff;padding:4px 12px;border-radius:10px;font-size:.72em;font-weight:800;font-family:Montserrat,sans-serif;letter-spacing:.5px;text-transform:uppercase">🌙 Evening ✓</span>':'<span style="background:rgba(235,230,255,0.92);color:#1e1640;padding:4px 12px;border-radius:10px;font-size:.72em;font-weight:700;font-family:Montserrat,sans-serif">🌙 Evening —</span>')+
+    (m.done?'<span style="background:linear-gradient(135deg,var(--p400),var(--p600));color:#fff;padding:4px 12px;border-radius:10px;font-size:.72em;font-weight:800;font-family:Montserrat,sans-serif;letter-spacing:.5px;text-transform:uppercase">🌅 Morning ✓</span>':'<span style="background:var(--surf2);color:var(--muted);padding:4px 12px;border-radius:10px;font-size:.72em;font-weight:700;font-family:Montserrat,sans-serif">🌅 Morning —</span>')+
+    (e.done?'<span style="background:linear-gradient(135deg,#4FBFB0,var(--p400));color:#fff;padding:4px 12px;border-radius:10px;font-size:.72em;font-weight:800;font-family:Montserrat,sans-serif;letter-spacing:.5px;text-transform:uppercase">🌙 Evening ✓</span>':'<span style="background:var(--surf2);color:var(--muted);padding:4px 12px;border-radius:10px;font-size:.72em;font-weight:700;font-family:Montserrat,sans-serif">🌙 Evening —</span>')+
     '</div>'+
-    (e.winOfDay?'<div style="background:linear-gradient(135deg,var(--p50),#E4F8F5);border:1px solid var(--bdr2);border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:.9em;font-weight:600">⭐ '+e.winOfDay+'</div>':'')+
+    (e.winOfDay?'<div style="background:linear-gradient(135deg,var(--p50),#E4F8F5);border:1px solid var(--bdr2);border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:.9em;font-weight:600;color:#1e1640">⭐ '+e.winOfDay+'</div>':'')+
     row('Brain Dump',m.dump)+row('Clear Energy',m.energy)+
     (m.tasks.some(function(t){return t;})?'<div style="margin-bottom:10px"><div style="font-size:.68em;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:3px;font-family:Montserrat,sans-serif">Top 3 Tasks</div>'+m.tasks.map(function(t,i){return t?'<div style="font-size:.88em;padding:3px 0">'+(m.checked[i]?'✅':'○')+' '+t+'</div>':''}).join('')+'</div>':'')+
     (ci.training?row('Training Watched',ci.training):'')+
@@ -2118,9 +2247,6 @@ function showConfetti(){
 }
 
 // ══════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════
-// ══════════════════════════════════════════════
 // WEEKLY RHYTHM
 // ══════════════════════════════════════════════
 var DAYS_R = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
@@ -2143,11 +2269,11 @@ function ruid(){ return Date.now().toString(36)+Math.random().toString(36).subst
 var rTasks=loadRTasks(), rChecks=loadRChecks();
 
 function todayDayName(){
-  var map=[6,0,1,2,3,4,5]; // Sun=0 → idx 6 (Sunday in our array)
+  var map=[6,0,1,2,3,4,5];
   return DAYS_R[map[new Date().getDay()]];
 }
 
-var rEditMode = {}; // track which day cards are in edit mode
+var rEditMode = {};
 
 function renderWeekGrid(){
   var grid=ge('weekGrid'); if(!grid)return;
@@ -2199,7 +2325,6 @@ function renderWeekGrid(){
 function toggleDayEdit(day){
   rEditMode[day]=!rEditMode[day];
   renderWeekGrid();
-  // Focus the input if entering edit mode
   if(rEditMode[day]){
     var inp=ge('ri_'+day);
     if(inp) setTimeout(function(){inp.focus();},50);
@@ -2222,8 +2347,6 @@ function deleteRTask(day,id){
 function toggleRCheck(day,id,checked){
   rChecks[day+'_'+id]=checked;
   saveRChecks(rChecks);
-  var txt=ge('rtxt_'+day+'_'+id);
-  if(txt) txt.className='dc-task-text '+(checked?'done':'');
   renderWeekGrid();
 }
 function checkAllToday(){
@@ -2351,7 +2474,6 @@ function mguid(){ return Date.now().toString(36)+Math.random().toString(36).subs
 
 var mgEntries = loadMGEntries();
 
-// Set today's date as default on load
 (function(){
   var el = document.getElementById('mgDate');
   if(el) el.value = TODAY;
@@ -2383,13 +2505,11 @@ function logMGEntry(){
     notes: notes
   };
 
-  // Replace if same date exists
   var existing = mgEntries.findIndex(function(e){return e.date===date;});
   if(existing>=0){ mgEntries[existing]=entry; } else { mgEntries.unshift(entry); }
 
   saveMGEntries(mgEntries);
 
-  // Clear form
   ['mgTotalMembers','mgMRR','mgFB','mgIG','mgYT','mgDirect','mgSkool','mgEmail','mgFBSpend','mgIGSpend','mgNotes'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.value='';
   });
@@ -2398,12 +2518,14 @@ function logMGEntry(){
   renderMGTab();
   var p=document.getElementById('savePill'); p.classList.add('show');
   setTimeout(function(){p.classList.remove('show');},2000);
+  updateMomentumBar();
 }
 
 function deleteMGEntry(id){
   mgEntries = mgEntries.filter(function(e){return e.id!==id;});
   saveMGEntries(mgEntries);
   renderMGTab();
+  updateMomentumBar();
 }
 
 function calcCPL(signups, spend){
@@ -2422,30 +2544,30 @@ function cplClass(cpl){
 function renderMGTab(){
   var sorted = mgEntries.slice().sort(function(a,b){return b.date.localeCompare(a.date);});
 
-  // ── KPI strip ──
-  var totalAllNew=0, totalFBSpend=0, totalIGSpend=0, latestTotal=0, latestDate='';
+  var totalAllNew=0, totalFBSpend=0, totalIGSpend=0, latestTotal=0;
+  var latestMRR = 0;
   sorted.forEach(function(e){
     totalAllNew += e.totalNew||0;
     totalFBSpend += e.fbSpend||0;
     totalIGSpend += e.igSpend||0;
   });
-  if(sorted.length){ latestTotal=sorted[0].totalMembers; latestDate=sorted[0].date; }
+  if(sorted.length){ latestTotal=sorted[0].totalMembers; latestMRR=sorted[0].mrr||0; }
   var totalSpend = totalFBSpend+totalIGSpend;
   var overallCPL = totalAllNew>0 && totalSpend>0 ? (totalSpend/totalAllNew).toFixed(2) : '—';
 
   var kpiRow = document.getElementById('mgKpiRow');
   if(kpiRow){
     kpiRow.innerHTML=[
-      {n: latestTotal||'—',        l:'Total Members'},
-      {n: totalAllNew,              l:'New Members Logged'},
-      {n: '$'+totalSpend.toFixed(0),l:'Total Ad Spend'},
-      {n: overallCPL==='—'?'—':'$'+overallCPL, l:'Avg Cost Per Member'}
+      {n: latestTotal||'—',                          l:'Total Members'},
+      {n: totalAllNew,                               l:'New Members Logged'},
+      {n: latestMRR>0?'$'+latestMRR.toLocaleString():'—', l:'Current MRR'},
+      {n: '$'+totalSpend.toFixed(0),                 l:'Total Ad Spend'},
+      {n: overallCPL==='—'?'—':'$'+overallCPL,      l:'Avg Cost Per Member'}
     ].map(function(k){
       return '<div class="mg-kpi"><div class="mg-kpi-n">'+k.n+'</div><div class="mg-kpi-l">'+k.l+'</div></div>';
     }).join('');
   }
 
-  // ── Leaderboard ──
   var totals={fb:0,ig:0,yt:0,direct:0,skool:0,email:0};
   var spends={fb:0,ig:0};
   sorted.forEach(function(e){
@@ -2475,7 +2597,6 @@ function renderMGTab(){
     }).join('');
   }
 
-  // ── Log table ──
   var wrap = document.getElementById('mgLogWrap');
   if(!wrap) return;
   if(!sorted.length){
@@ -2501,9 +2622,11 @@ function renderMGTab(){
       if(igCPL) parts.push('<span class="'+cplClass(igCPL)+'">IG $'+igCPL+'</span>');
       cplCell=parts.join(' ');
     }
+    var mrrCell = e.mrr>0?'<span style="font-family:Montserrat,sans-serif;font-weight:800;color:#D4B86A">$'+e.mrr.toLocaleString()+'</span>':'';
     return '<tr>'+
       '<td><strong>'+d+'</strong>'+(e.notes?'<div style="font-size:.72em;color:var(--muted);margin-top:3px;font-weight:300">'+escRHtml(e.notes)+'</div>':'')+'</td>'+
       '<td style="text-align:center"><strong style="font-family:Montserrat,sans-serif;color:var(--p400)">'+e.totalMembers+'</strong></td>'+
+      '<td style="text-align:center">'+mrrCell+'</td>'+
       '<td style="text-align:center"><strong style="font-family:Montserrat,sans-serif">'+e.totalNew+'</strong></td>'+
       '<td>'+sourceCells+'</td>'+
       '<td>'+spendCell+'</td>'+
@@ -2516,6 +2639,7 @@ function renderMGTab(){
     '<thead><tr>'+
       '<th>Date</th>'+
       '<th>Total</th>'+
+      '<th>MRR</th>'+
       '<th>New</th>'+
       '<th>Sources</th>'+
       '<th>Spend</th>'+
@@ -2536,21 +2660,18 @@ go=function(id,btn){
 };
 
 
-
 // ══════════════════════════════════════════════
 // DATA IMPORT
 // ══════════════════════════════════════════════
-var PRELOADED_DATA = {"profile":{"snap":{"ig":"4975","tt":"9765","yt":"622","sk":"261","mrr":"1300","em":"","notes":"Excited!!!","done":true},"challengeStart":"2026-03-16","currentSnap":{"sk":"287","ig":"5500","tt":"9875","yt":"631","mrr":"1384"}},"days":{"2026-03-16":{"morning":{"done":true,"dump":"","highSelf":"","energy":"","tasks":["","",""],"checked":[false,false,false]},"checkin":{"training":"Instagram Training today","learnings":"authentic organic content","visitors":"45","visitorsDir":"down","conv":"","convDir":"up","members":"260","membersDir":"up","groupEng":"57","groupEngDir":"up","profile":"30","profileDir":"up","contentNum":"1","contentLink":"https://youtu.be/6dZvzHLqu20?si=e9CLks0JazYdEiqq","contentType":"YouTube","dms":"2","adSpend":"35","newAds":"","insight":"N/A","posted":true},"evening":{"done":true,"winOfDay":"Launched 8 new ads and uploaded Day 4 in its entirety for 4 new artifacts!","wins":"I updated the daily visiblility system to make it easier, had a great revenue lab call my muffins","improve":"I did not get to post my tiktok video on croatia","reflection":"","contentIdeas":"Tiktok Live structure I follow, how to create artifacts with claude, creating challenge trainings for an attraction offer, testing, optimizing, and consolidating ads. Coming up with the callouts and ad hooks. Designing new ads to promote different things in the community. Also designing trackers and interactive things for your challenge","energy":6},"timeLogs":[],"skoolLink":"https://www.skool.com/amanda/how-i-fill-in-the-new-visibility-tracker?p=cb4ae55c"},"2026-03-17":{"morning":{"done":true,"dump":"Create tiktoks, update the repurposing engine to work for short form clips and a brain dump, create the slides and video training for day 5 tiktok. specifically how to go live","highSelf":"","energy":"Creating tiktok content and updating the repurposing engine so I can cover it in the tiktok training","tasks":["Record 5-7 tiktoks","Update the repurposing engine","Upload the tiktok day 5 visibility training"],"checked":[false,false,false]},"checkin":{"training":"Claude cowork","learnings":"cowork can work on your computer. Also with tiktok using your analytics to see whats performing and just doing more, better, and saying things over and over again","visitors":"48","visitorsDir":"up","conv":"2.1","convDir":"up","members":"260","membersDir":"down","groupEng":"54","groupEngDir":"up","profile":"27","profileDir":"down","contentNum":"1","contentLink":"https://www.tiktok.com/@amandafieldingsmith/video/7618202938829196574?is_from_webapp=1&sender_device=pc&web_id=7601836574787356190","contentType":"TikTok","dms":"1","adSpend":"50","newAds":"","insight":"I love the repurposing engine!","posted":true},"evening":{"done":false,"winOfDay":"","wins":"","improve":"","reflection":"","contentIdeas":"","energy":0},"timeLogs":[],"skoolLink":"https://www.skool.com/amanda/day-5-visibility-by-design-challenge?p=c9c66c2e"},"2026-03-18":{"morning":{"done":true,"dump":"Make Skool Ads, Plan out Days 6 & 7 for the challenge, traffic challenge, VBD challenge, slides for days 6 & 7, post to titkok, Clean, laundry, meet with Shak, money date","highSelf":"Its so cool to see my content from 1 year ago and see the progress. Everything Im working towards does in fact become a reality. ","energy":"Planning day 6 of challenge with claude. DM assistant?","tasks":["Day 6 Slides","Artifact?","Money Date"],"checked":[false,false,false]},"checkin":{"training":"I watched Skool News","learnings":"Theres no substitute for time in market. It took them 4 years to hit 1 million users now they do that in a week. Also my ads seem to be clicking. need to stop fucking with them and let them do their thing","visitors":"72","visitorsDir":"up","conv":"","convDir":"down","members":"260","membersDir":"same","groupEng":"40","groupEngDir":"down","profile":"18","profileDir":"down","contentNum":"2","contentLink":"https://www.tiktok.com/@amandafieldingsmith/video/7618202938829196574?is_from_webapp=1&sender_device=pc&web_id=7601836574787356190","contentType":"TikTok","dms":"","adSpend":"50","newAds":"4","insight":"Speed vs Quality. How its easiest for me to batch 7 ish at a time but get to keep up with organic content for ads to really work. ","posted":true,"discovery":"2063","discoveryDir":"same"},"evening":{"done":true,"winOfDay":"Went Viral on IG for the first time ever using the repurposing engine. 2 new members joined this am & ","wins":"2 new members. Tiffany no longer cancelling her membership. Youtube video continuing to grow and my IG is BLOWING TF UP!! Also going to Ultra with Milos this summer","improve":"Need to create more content from the shorts I made","reflection":"","contentIdeas":"Ready for ads checklist or artifact. How to setup a challenge, build artifacts. Make ads that convert","energy":4},"timeLogs":[],"skoolLink":"https://www.skool.com/amanda/visibililty-challenge-daily-accountability?p=ebc3f12c"},"2026-03-19":{"morning":{"done":true,"dump":"Test new ad angles. Work on new ambassador ad concepts. Create the day 6 & 7 training outlines. Record the loom. Add classroom content below the video. Post the revenue lab replay. MOCKUP ADS!!!","highSelf":"Day 6 training and artifact.","energy":"","tasks":["Day 6 Training","Day 6 Artifact","Day 7 Artifact"],"checked":[false,false,false]},"checkin":{"training":"Day 3 Ads traffic challenge","learnings":"If one campaign starts getting more expensive slowly decrease budget and increase budget on the one thats doing well. Create an ad just promoting the daily visibility system - specific cookies in the classroom do really well. Test new ads multiple times a week to keep costs low. Ad a long form direct response ad. Proof ads. always use post ID to consolidate and build social proof","visitors":"89","visitorsDir":"up","conv":"1.1","convDir":"up","members":"261","membersDir":"up","groupEng":"40","groupEngDir":"down","profile":"45","profileDir":"up","contentNum":"2","contentLink":"https://www.instagram.com/reel/DWBndOqld0_/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==","contentType":"Reel","dms":"","adSpend":"60","newAds":"","insight":"Importance of testing and launching new ad creatives multiple times a week to keep costs low. ","posted":true,"discovery":"2082","discoveryDir":"down"},"evening":{"done":false,"winOfDay":"","wins":"","improve":"","reflection":"","contentIdeas":"","energy":0},"timeLogs":[],"skoolLink":""},"2026-03-20":{"morning":{"done":true,"dump":"Record day 6 training, video walkthrough, create new ad campaign to test with mockups !","highSelf":"","energy":"Recording the day 6 content","tasks":["Record day 6 ","Mockup Ads","Post my check in comment"],"checked":[false,false,false]},"checkin":{"training":"Behind the scenes of Evelyn optimizing Ads and consolidating new campaigns","learnings":"What clicked was ","visitors":"64","visitorsDir":"down","conv":"3.1","convDir":"up","members":"287","membersDir":"same","groupEng":"69","groupEngDir":"up","profile":"48","profileDir":"up","contentNum":"4","contentLink":"https://www.tiktok.com/@amandafieldingsmith/video/7619046146861747486?is_from_webapp=1&sender_device=pc&web_id=7601836574787356190","contentType":"TikTok","dms":"2","adSpend":"45","newAds":"","insight":"","posted":true,"discovery":"2035","discoveryDir":"up"},"evening":{"done":false,"winOfDay":"","wins":"","improve":"","reflection":"","contentIdeas":"","energy":0},"timeLogs":[],"skoolLink":"https://www.skool.com/amanda/visibililty-challenge-daily-accountability?p=84389ab6"},"2026-03-21":{"morning":{"done":false,"dump":"","highSelf":"","energy":"","tasks":["","",""],"checked":[false,false,false]},"checkin":{"training":"Evelyns Live Q&A","learnings":"Do a traffic campaign just with the IG many chat posts with automation that sends them the artifact and an invite to join your skool. \nAlso plug the about page into claude with classroom to come up with hypothetical cookie and bakery concepts that you can promote specifically with ads - look through insight factory to see whats trending. \n\nPlug in all the call transcripts to claude and have it come up with the buying personas for that offer to create and test a bunch of different callouts to every single persona\n\n5-10 distinct image visuals with 3-4 reel either b roll or talking head in 1 campaign\n\nWith free trial it should always have a reason and be for a limitied time to celebrate something. either a win of mine or someone in the community for 1 week and give them a specific tangible reason to stay. the free trial 7 day should be a perfect filter for the type of person who would want to upgrade that is a can opener\n\nNot everyone should start with high ticket because its very hard to do ethically to ensure youre only working with people who are 100% ready and have the skills required to actually be successful \n7 second b roll reels for ads with callouts\nAdvertise the repurposing engine, hot take miner, youtube content studio, weekly workflow, carousel generator \n\nSimple lifestyle ads with long form direct response copy with snapshots from daily life do really well with unaware audience\n\nInsight factory to see what people are buying in spiritual business.","visitors":"","visitorsDir":"up","conv":"","convDir":"up","members":"","membersDir":"up","groupEng":"","groupEngDir":"up","profile":"","profileDir":"up","contentNum":"","contentLink":"","contentType":"","dms":"","adSpend":"","newAds":"","insight":"","posted":false,"discovery":"","ig":"","yt":"","tt":"","mrr":""},"evening":{"done":false,"winOfDay":"","wins":"","improve":"","reflection":"","contentIdeas":"Do a traffic campaign just with the IG many chat posts with automation that sends them the artifact and an invite to join your skool. \nAlso plug the about page into claude with classroom to come up with hypothetical cookie and bakery concepts that you can promote specifically with ads - look through insight factory to see whats trending. \n\nPlug in all the call transcripts to claude and have it come up with the buying personas for that offer to create and test a bunch of different callouts to every single persona\n\n5-10 distinct image visuals with 3-4 reel either b roll or talking head in 1 campaign\n\nWith free trial it should always have a reason and be for a limitied time to celebrate something. either a win of mine or someone in the community for 1 week and give them a specific tangible reason to stay. the free trial 7 day should be a perfect filter for the type of person who would want to upgrade that is a can opener\n\nNot everyone should start with high ticket because its very hard to do ethically to ensure youre only working with people who are 100% ready and have the skills required to actually be successful \n7 second b roll reels for ads with callouts\nAdvertise the repurposing engine, hot take miner, youtube content studio, weekly workflow, carousel generator \n\nSimple lifestyle ads with long form direct response copy with snapshots from daily life do really well with unaware audience\n\nInsight factory to see what people are buying in spiritual business.","energy":8},"timeLogs":[],"skoolLink":""}}};
+var PRELOADED_DATA = {"profile":{"snap":{"ig":"4975","tt":"9765","yt":"622","sk":"261","mrr":"1300","em":"","notes":"Excited!!!","done":true},"challengeStart":"2026-03-16","currentSnap":{"sk":"287","ig":"5500","tt":"9875","yt":"631","mrr":"1384"}},"days":{"2026-03-16":{"morning":{"done":true,"dump":"","highSelf":"","energy":"","tasks":["","",""],"checked":[false,false,false]},"checkin":{"training":"Instagram Training today","learnings":"authentic organic content","visitors":"45","visitorsDir":"down","conv":"","convDir":"up","members":"260","membersDir":"up","groupEng":"57","groupEngDir":"up","profile":"30","profileDir":"up","contentNum":"1","contentLink":"https://youtu.be/6dZvzHLqu20?si=e9CLks0JazYdEiqq","contentType":"YouTube","dms":"2","adSpend":"35","newAds":"","insight":"N/A","posted":true},"evening":{"done":true,"winOfDay":"Launched 8 new ads and uploaded Day 4 in its entirety for 4 new artifacts!","wins":"I updated the daily visiblility system to make it easier, had a great revenue lab call my muffins","improve":"I did not get to post my tiktok video on croatia","reflection":"","contentIdeas":"Tiktok Live structure I follow, how to create artifacts with claude, creating challenge trainings for an attraction offer, testing, optimizing, and consolidating ads. Coming up with the callouts and ad hooks. Designing new ads to promote different things in the community. Also designing trackers and interactive things for your challenge","energy":6},"timeLogs":[],"skoolLink":"https://www.skool.com/amanda/how-i-fill-in-the-new-visibility-tracker?p=cb4ae55c"},"2026-03-17":{"morning":{"done":true,"dump":"Create tiktoks, update the repurposing engine to work for short form clips and a brain dump, create the slides and video training for day 5 tiktok. specifically how to go live","highSelf":"","energy":"Creating tiktok content and updating the repurposing engine so I can cover it in the tiktok training","tasks":["Record 5-7 tiktoks","Update the repurposing engine","Upload the tiktok day 5 visibility training"],"checked":[false,false,false]},"checkin":{"training":"Claude cowork","learnings":"cowork can work on your computer. Also with tiktok using your analytics to see whats performing and just doing more, better, and saying things over and over again","visitors":"48","visitorsDir":"up","conv":"2.1","convDir":"up","members":"260","membersDir":"down","groupEng":"54","groupEngDir":"up","profile":"27","profileDir":"down","contentNum":"1","contentLink":"https://www.tiktok.com/@amandafieldingsmith/video/7618202938829196574?is_from_webapp=1&sender_device=pc&web_id=7601836574787356190","contentType":"TikTok","dms":"1","adSpend":"50","newAds":"","insight":"I love the repurposing engine!","posted":true},"evening":{"done":false,"winOfDay":"","wins":"","improve":"","reflection":"","contentIdeas":"","energy":0},"timeLogs":[],"skoolLink":"https://www.skool.com/amanda/day-5-visibility-by-design-challenge?p=c9c66c2e"},"2026-03-18":{"morning":{"done":true,"dump":"Make Skool Ads, Plan out Days 6 & 7 for the challenge, traffic challenge, VBD challenge, slides for days 6 & 7, post to titkok, Clean, laundry, meet with Shak, money date","highSelf":"Its so cool to see my content from 1 year ago and see the progress. Everything Im working towards does in fact become a reality. ","energy":"Planning day 6 of challenge with claude. DM assistant?","tasks":["Day 6 Slides","Artifact?","Money Date"],"checked":[false,false,false]},"checkin":{"training":"I watched Skool News","learnings":"Theres no substitute for time in market. It took them 4 years to hit 1 million users now they do that in a week. Also my ads seem to be clicking. need to stop fucking with them and let them do their thing","visitors":"72","visitorsDir":"up","conv":"","convDir":"down","members":"260","membersDir":"same","groupEng":"40","groupEngDir":"down","profile":"18","profileDir":"down","contentNum":"2","contentLink":"https://www.tiktok.com/@amandafieldingsmith/video/7618202938829196574?is_from_webapp=1&sender_device=pc&web_id=7601836574787356190","contentType":"TikTok","dms":"","adSpend":"50","newAds":"4","insight":"Speed vs Quality. How its easiest for me to batch 7 ish at a time but get to keep up with organic content for ads to really work. ","posted":true,"discovery":"2063","discoveryDir":"same"},"evening":{"done":true,"winOfDay":"Went Viral on IG for the first time ever using the repurposing engine. 2 new members joined this am & ","wins":"2 new members. Tiffany no longer cancelling her membership. Youtube video continuing to grow and my IG is BLOWING TF UP!! Also going to Ultra with Milos this summer","improve":"Need to create more content from the shorts I made","reflection":"","contentIdeas":"Ready for ads checklist or artifact. How to setup a challenge, build artifacts. Make ads that convert","energy":4},"timeLogs":[],"skoolLink":"https://www.skool.com/amanda/visibililty-challenge-daily-accountability?p=ebc3f12c"},"2026-03-19":{"morning":{"done":true,"dump":"Test new ad angles. Work on new ambassador ad concepts. Create the day 6 & 7 training outlines. Record the loom. Add classroom content below the video. Post the revenue lab replay. MOCKUP ADS!!!","highSelf":"Day 6 training and artifact.","energy":"","tasks":["Day 6 Training","Day 6 Artifact","Day 7 Artifact"],"checked":[false,false,false]},"checkin":{"training":"Day 3 Ads traffic challenge","learnings":"If one campaign starts getting more expensive slowly decrease budget and increase budget on the one thats doing well. Create an ad just promoting the daily visibility system - specific cookies in the classroom do really well. Test new ads multiple times a week to keep costs low. Ad a long form direct response ad. Proof ads. always use post ID to consolidate and build social proof","visitors":"89","visitorsDir":"up","conv":"1.1","convDir":"up","members":"261","membersDir":"up","groupEng":"40","groupEngDir":"down","profile":"45","profileDir":"up","contentNum":"2","contentLink":"https://www.instagram.com/reel/DWBndOqld0_/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==","contentType":"Reel","dms":"","adSpend":"60","newAds":"","insight":"Importance of testing and launching new ad creatives multiple times a week to keep costs low. ","posted":true,"discovery":"2082","discoveryDir":"down"},"evening":{"done":false,"winOfDay":"","wins":"","improve":"","reflection":"","contentIdeas":"","energy":0},"timeLogs":[],"skoolLink":""},"2026-03-20":{"morning":{"done":true,"dump":"Record day 6 training, video walkthrough, create new ad campaign to test with mockups !","highSelf":"","energy":"Recording the day 6 content","tasks":["Record day 6 ","Mockup Ads","Post my check in comment"],"checked":[false,false,false]},"checkin":{"training":"Behind the scenes of Evelyn optimizing Ads and consolidating new campaigns","learnings":"What clicked was ","visitors":"64","visitorsDir":"down","conv":"3.1","convDir":"up","members":"287","membersDir":"same","groupEng":"69","groupEngDir":"up","profile":"48","profileDir":"up","contentNum":"4","contentLink":"https://www.tiktok.com/@amandafieldingsmith/video/7619046146861747486?is_from_webapp=1&sender_device=pc&web_id=7601836574787356190","contentType":"TikTok","dms":"2","adSpend":"45","newAds":"","insight":"","posted":true,"discovery":"2035","discoveryDir":"up"},"evening":{"done":false,"winOfDay":"","wins":"","improve":"","reflection":"","contentIdeas":"","energy":0},"timeLogs":[],"skoolLink":"https://www.skool.com/amanda/visibililty-challenge-daily-accountability?p=84389ab6"},"2026-03-21":{"morning":{"done":false,"dump":"","highSelf":"","energy":"","tasks":["","",""],"checked":[false,false,false]},"checkin":{"training":"Evelyns Live Q&A","learnings":"Do a traffic campaign just with the IG many chat posts with automation that sends them the artifact and an invite to join your skool. \nAlso plug the about page into claude with classroom to come up with hypothetical cookie and bakery concepts that you can promote specifically with ads - look through insight factory to see whats trending. \n\nPlug in all the call transcripts to claude and have it come up with the buying personas for that offer to create and test a bunch of different callouts to every single persona\n\n5-10 distinct image visuals with 3-4 reel either b roll or talking head in 1 campaign\n\nWith free trial it should always have a reason and be for a limitied time to celebrate something. either a win of mine or someone in the community for 1 week and give them a specific tangible reason to stay. the free trial 7 day should be a perfect filter for the type of person who would want to upgrade that is a can opener\n\nNot everyone should start with high ticket because its very hard to do ethically to ensure youre only working with people who are 100% ready and have the skills required to actually be successful \n7 second b roll reels for ads with callouts\nAdvertise the repurposing engine, hot take miner, youtube content studio, weekly workflow, carousel generator \n\nSimple lifestyle ads with long form direct response copy with snapshots from daily life do really well with unaware audience\n\nInsight factory to see what people are buying in spiritual business.","visitors":"","visitorsDir":"up","conv":"","convDir":"up","members":"","membersDir":"up","groupEng":"","groupEngDir":"up","profile":"","profileDir":"up","contentNum":"","contentLink":"","contentType":"","dms":"","adSpend":"","newAds":"","insight":"","posted":false,"discovery":"","ig":"","yt":"","tt":"","mrr":""},"evening":{"done":false,"winOfDay":"","wins":"","improve":"","reflection":"","contentIdeas":"Do a traffic campaign just with the IG many chat posts with automation that sends them the artifact and an invite to join your skool.\nAlso plug the about page into claude with classroom to come up with hypothetical cookie and bakery concepts that you can promote specifically with ads.\n\nPlug in all the call transcripts to claude and have it come up with the buying personas for that offer to create and test a bunch of different callouts to every single persona.","energy":8},"timeLogs":[],"skoolLink":""}}};
 
 function doImport(data){
   try {
-    // Merge days — don't overwrite keys that already exist in current DB
     if(data.days){
       Object.keys(data.days).forEach(function(ds){
         if(!DB.days[ds]) DB.days[ds] = data.days[ds];
       });
     }
-    // Import profile/snapshot only if not already set
     if(data.profile){
       if(data.profile.snap && !DB.profile.snap.done){
         DB.profile.snap = data.profile.snap;
