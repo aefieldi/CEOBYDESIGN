@@ -948,10 +948,13 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
   letter-spacing:.7px;text-transform:uppercase;padding:3px 9px;
   border-radius:20px;border:1.5px solid;
 }
-.idea-badge.ads     {color:#4FBFB0;border-color:rgba(79,191,176,.35);background:rgba(79,191,176,.07)}
-.idea-badge.offers  {color:#2d8f5a;border-color:rgba(45,143,90,.3);background:rgba(45,143,90,.06)}
-.idea-badge.community{color:var(--p600);border-color:rgba(127,119,221,.35);background:rgba(127,119,221,.07)}
-.idea-badge.youtube {color:#b83000;border-color:rgba(184,48,0,.3);background:rgba(184,48,0,.06)}
+.idea-badge.ads        {color:#4FBFB0;border-color:rgba(79,191,176,.35);background:rgba(79,191,176,.07)}
+.idea-badge.commoffer  {color:#2d8f5a;border-color:rgba(45,143,90,.3);background:rgba(45,143,90,.06)}
+.idea-badge.youtube    {color:#b83000;border-color:rgba(184,48,0,.3);background:rgba(184,48,0,.06)}
+.idea-badge.automations{color:#D4B86A;border-color:rgba(212,184,106,.35);background:rgba(212,184,106,.07)}
+.idea-badge.content    {color:var(--p400);border-color:rgba(123,111,212,.35);background:rgba(123,111,212,.07)}
+.idea-badge.offers     {color:#2d8f5a;border-color:rgba(45,143,90,.3);background:rgba(45,143,90,.06)}
+.idea-badge.community  {color:var(--p600);border-color:rgba(127,119,221,.35);background:rgba(127,119,221,.07)}
 .idea-status-sel{
   margin-left:auto;font-family:'Montserrat',sans-serif;font-size:.62em;
   font-weight:700;padding:3px 8px;border-radius:20px;
@@ -1282,27 +1285,15 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
   </div>
 
   <div class="card win">
-    <div class="card-title">🏆 Win of the Day</div>
-    <div class="card-sub">One sentence. What are you most proud of today? Goes into your Hall of Wins.</div>
-    <textarea id="eWinOfDay" placeholder="Today I..." style="min-height:60px" oninput="saveE()"></textarea>
-  </div>
-
-  <div class="card">
-    <div class="card-title">🏆 Full Wins</div>
-    <div class="card-sub">Everything that moved today — actions taken, content created, conversations started.</div>
-    <textarea id="eWins" placeholder="What did you do, create, send, or show up for?" oninput="saveE()"></textarea>
+    <div class="card-title">🏆 Wins</div>
+    <div class="card-sub">Everything that moved today — big or small. Actions taken, content created, conversations started, breakthroughs. Goes into your Hall of Wins.</div>
+    <textarea id="eWins" placeholder="Today I..." oninput="saveE()"></textarea>
   </div>
 
   <div class="card pink">
-    <div class="card-title">🔄 What Didn't Work / What to Improve</div>
-    <div class="card-sub">No judgment. What will you do differently tomorrow?</div>
-    <textarea id="eImprove" placeholder="What didn't go as planned? What would you change?" oninput="saveE()"></textarea>
-  </div>
-
-  <div class="card">
-    <div class="card-title">👁 Questions or Insights About Visibility</div>
-    <div class="card-sub">Any questions that came up today? Any ahas? Amanda reads these.</div>
-    <textarea id="eReflection" placeholder="I'm wondering if... / Something that clicked..." oninput="saveE()"></textarea>
+    <div class="card-title">🎯 Tomorrow's Priorities</div>
+    <div class="card-sub">What are the 3 most important things to tackle tomorrow? <strong style="color:#7DD4C8">Auto-fills your next morning's brain dump.</strong></div>
+    <textarea id="eImprove" placeholder="1. &#10;2. &#10;3. " style="min-height:90px" oninput="saveE()"></textarea>
   </div>
 
   <div class="card" style="border:1.5px dashed rgba(127,119,221,0.4)">
@@ -1439,9 +1430,10 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
           <label class="idea-form-label">Category</label>
           <select class="idea-form-select" id="ideaCat">
             <option value="ads">📣 Ad Concepts</option>
-            <option value="offers">🎁 New Offers</option>
-            <option value="community">🏛️ Community Content</option>
+            <option value="commoffer">🎁 Community Offer</option>
             <option value="youtube">▶️ YouTube Ideas</option>
+            <option value="automations">⚙️ Automations</option>
+            <option value="content">✍️ Content Ideas</option>
           </select>
         </div>
         <div class="idea-form-row">
@@ -1818,7 +1810,16 @@ function updateMomentumBar(){
 // ══════════════════════════════════════════════
 function loadM(){
   var d = getDay(mDay);
-  sv('mDump',d.morning.dump);
+  // Auto-fill brain dump from previous day's priorities if dump is currently empty
+  var dumpVal = d.morning.dump || '';
+  if(!dumpVal) {
+    var prevDay = addDays(mDay, -1);
+    var prevE = DB.days[prevDay] && DB.days[prevDay].evening;
+    if(prevE && prevE.improve && prevE.improve.trim()) {
+      dumpVal = '🎯 From last night\'s priorities:\n' + prevE.improve.trim();
+    }
+  }
+  sv('mDump', dumpVal);
   sv('mHighSelf',d.morning.highSelf||'');
   sv('mEnergy',d.morning.energy);
   sv('t1',d.morning.tasks[0]); sv('t2',d.morning.tasks[1]); sv('t3',d.morning.tasks[2]);
@@ -2004,8 +2005,12 @@ function renderTimerTop3(){
 // ══════════════════════════════════════════════
 function loadE(){
   var d=getDay(eDay); var e=d.evening;
-  sv('eWinOfDay',e.winOfDay||''); sv('eWins',e.wins); sv('eImprove',e.improve||'');
-  sv('eReflection',e.reflection); sv('eContentIdeas',e.contentIdeas||'');
+  // Merge legacy winOfDay into wins if wins is empty
+  var winsVal = e.wins || '';
+  if(!winsVal && e.winOfDay) winsVal = e.winOfDay;
+  sv('eWins', winsVal);
+  sv('eImprove', e.improve||'');
+  sv('eContentIdeas', e.contentIdeas||'');
   energyVal=e.energy||0;
   document.querySelectorAll('.e-btn').forEach(function(b){ b.classList.toggle('sel',parseInt(b.dataset.v)===energyVal); });
   ge('eDate').innerHTML=fmtLong(eDay)+(eDay===TODAY?'<span class="today-pill">Today</span>':'');
@@ -2013,8 +2018,8 @@ function loadE(){
 }
 function saveE(){
   var d=getDay(eDay); var e=d.evening;
-  e.winOfDay=gv('eWinOfDay'); e.wins=gv('eWins'); e.improve=gv('eImprove');
-  e.reflection=gv('eReflection'); e.contentIdeas=gv('eContentIdeas'); e.energy=energyVal;
+  e.wins=gv('eWins'); e.improve=gv('eImprove');
+  e.contentIdeas=gv('eContentIdeas'); e.energy=energyVal;
   save();
 }
 function setEnergy(v){
@@ -2028,7 +2033,30 @@ function completeE(){
   ge('eStatus').textContent='✓ Completed';
   showConfetti();
   renderCB();
-  alert('✨ Evening debrief complete! Your content ideas have been saved to the Content Bank.');
+
+  // Auto-push content ideas into Idea Vault as a single card
+  var ideas_local = loadIdeas();
+  var ideaText = gv('eContentIdeas').trim();
+  if(ideaText){
+    var dateLabel = fmtShort(eDay);
+    // Don't duplicate — check if a card with same date+source already exists
+    var alreadyExists = ideas_local.some(function(i){ return i.source==='evening' && i.title===dateLabel+' — Content Ideas'; });
+    if(!alreadyExists){
+      ideas_local.unshift({
+        id: iuid(),
+        title: dateLabel+' — Content Ideas',
+        cat: 'content',
+        notes: ideaText,
+        status: 'new',
+        source: 'evening',
+        ts: Date.now()
+      });
+      saveIdeas(ideas_local);
+      ideas = ideas_local;
+    }
+  }
+
+  alert('✨ Evening debrief complete! Content ideas saved to Content Bank + Idea Vault.');
 }
 
 // ══════════════════════════════════════════════
@@ -2164,10 +2192,15 @@ function saveCurrentSnap(key,val){
 function renderHallOfWins(){
   var el=ge('hallOfWins');
   var dates=Object.keys(DB.days).sort().reverse();
-  var wins=dates.filter(function(ds){ return DB.days[ds].evening&&DB.days[ds].evening.winOfDay&&DB.days[ds].evening.winOfDay.trim(); });
+  var wins=dates.filter(function(ds){
+    var e=DB.days[ds].evening;
+    return e && ((e.wins&&e.wins.trim()) || (e.winOfDay&&e.winOfDay.trim()));
+  });
   if(!wins.length){ el.innerHTML='<div style="color:var(--muted);font-size:.88em;padding:12px 0;font-weight:300">Complete your evening debrief each day and your wins will appear here. 🏆</div>'; return; }
   el.innerHTML=wins.map(function(ds){
-    return '<div class="win-card"><div class="win-date">'+fmtShort(ds)+'</div><div class="win-text">'+DB.days[ds].evening.winOfDay+'</div><div class="win-star">⭐</div></div>';
+    var e=DB.days[ds].evening;
+    var text = (e.wins&&e.wins.trim()) ? e.wins : e.winOfDay;
+    return '<div class="win-card"><div class="win-date">'+fmtShort(ds)+'</div><div class="win-text">'+text+'</div><div class="win-star">⭐</div></div>';
   }).join('');
 }
 function renderGrid(){
@@ -2213,13 +2246,13 @@ function openDayModal(ds){
     (m.done?'<span style="background:linear-gradient(135deg,var(--p400),var(--p600));color:#fff;padding:4px 12px;border-radius:10px;font-size:.72em;font-weight:800;font-family:Montserrat,sans-serif;letter-spacing:.5px;text-transform:uppercase">🌅 Morning ✓</span>':'<span style="background:var(--surf2);color:var(--muted);padding:4px 12px;border-radius:10px;font-size:.72em;font-weight:700;font-family:Montserrat,sans-serif">🌅 Morning —</span>')+
     (e.done?'<span style="background:linear-gradient(135deg,#4FBFB0,var(--p400));color:#fff;padding:4px 12px;border-radius:10px;font-size:.72em;font-weight:800;font-family:Montserrat,sans-serif;letter-spacing:.5px;text-transform:uppercase">🌙 Evening ✓</span>':'<span style="background:var(--surf2);color:var(--muted);padding:4px 12px;border-radius:10px;font-size:.72em;font-weight:700;font-family:Montserrat,sans-serif">🌙 Evening —</span>')+
     '</div>'+
-    (e.winOfDay?'<div style="background:linear-gradient(135deg,var(--p50),#E4F8F5);border:1px solid var(--bdr2);border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:.9em;font-weight:600;color:#1e1640">⭐ '+e.winOfDay+'</div>':'')+
+    (e.wins?'<div style="background:linear-gradient(135deg,var(--p50),#E4F8F5);border:1px solid var(--bdr2);border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:.9em;font-weight:600;color:#1e1640">⭐ '+e.wins+'</div>':'')+
     row('Brain Dump',m.dump)+row('Clear Energy',m.energy)+
     (m.tasks.some(function(t){return t;})?'<div style="margin-bottom:10px"><div style="font-size:.68em;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:3px;font-family:Montserrat,sans-serif">Top 3 Tasks</div>'+m.tasks.map(function(t,i){return t?'<div style="font-size:.88em;padding:3px 0">'+(m.checked[i]?'✅':'○')+' '+t+'</div>':''}).join('')+'</div>':'')+
     (ci.training?row('Training Watched',ci.training):'')+
     (ci.learnings?row('Learnings',ci.learnings):'')+
     '<div style="background:var(--surf2);border-radius:8px;padding:10px 12px;font-size:.82em;color:var(--muted);margin-bottom:10px;font-weight:300">👤 Visitors: '+(ci.visitors||'—')+' · Members: '+(ci.members||'—')+' · Content: '+(ci.contentNum||'0')+' pieces · DMs: '+(ci.dms||'0')+'</div>'+
-    row('Wins',e.wins)+row('What to Improve',e.improve)+row('Visibility Q&A',e.reflection)+
+    row('Wins',e.wins)+row("Tomorrow's Priorities",e.improve)+
     row('Content Ideas',e.contentIdeas)+
     (e.energy?'<div style="font-size:.82em;color:var(--muted);margin-top:8px;font-weight:300">Energy: '+e.energy+'/10</div>':'');
   ge('modal').style.display='flex';
@@ -2388,10 +2421,14 @@ function escRHtml(s){
 // IDEA VAULT
 // ══════════════════════════════════════════════
 var IDEA_CATS={
-  ads:     {label:'Ad Concepts',     icon:'📣'},
-  offers:  {label:'New Offers',      icon:'🎁'},
-  community:{label:'Community Content',icon:'🏛️'},
-  youtube: {label:'YouTube Ideas',   icon:'▶️'}
+  ads:        {label:'Ad Concepts',     icon:'📣'},
+  commoffer:  {label:'Community Offer', icon:'🎁'},
+  youtube:    {label:'YouTube Ideas',   icon:'▶️'},
+  automations:{label:'Automations',     icon:'⚙️'},
+  content:    {label:'Content Ideas',   icon:'✍️'},
+  // legacy — keep so old cards still render
+  offers:     {label:'Community Offer', icon:'🎁'},
+  community:  {label:'Community Offer', icon:'🎁'}
 };
 function loadIdeas(){ try{return JSON.parse(localStorage.getItem('fos_ideas')||'[]');}catch(e){return[];} }
 function saveIdeas(data){ localStorage.setItem('fos_ideas',JSON.stringify(data)); }
@@ -2401,9 +2438,15 @@ var ideas=loadIdeas(), activeCat='all', activeStatus='all';
 
 function renderIdeaCatBtns(){
   var c=ge('ideaCatBtns'); if(!c)return;
+  var ACTIVE_CATS=['ads','commoffer','youtube','automations','content'];
   var btns=[{key:'all',label:'All Ideas',icon:'✨',count:ideas.length}];
-  Object.entries(IDEA_CATS).forEach(function(e){
-    btns.push({key:e[0],label:e[1].label,icon:e[1].icon,count:ideas.filter(function(i){return i.cat===e[0];}).length});
+  ACTIVE_CATS.forEach(function(key){
+    var cat=IDEA_CATS[key];
+    btns.push({key:key,label:cat.label,icon:cat.icon,count:ideas.filter(function(i){
+      // count legacy keys under their new home
+      if(key==='commoffer') return i.cat==='commoffer'||i.cat==='offers'||i.cat==='community';
+      return i.cat===key;
+    }).length});
   });
   c.innerHTML=btns.map(function(b){
     return '<button class="idea-cat-btn '+(activeCat===b.key?'active':'')+'" onclick="setActiveCat(\''+b.key+'\')">'+
@@ -2428,7 +2471,12 @@ function renderIdeaList(){
   var list=ge('ideaList'); if(!list)return;
   var title=ge('ideaMainTitle');
   var filtered=ideas.slice();
-  if(activeCat!=='all') filtered=filtered.filter(function(i){return i.cat===activeCat;});
+  if(activeCat!=='all'){
+    filtered=filtered.filter(function(i){
+      if(activeCat==='commoffer') return i.cat==='commoffer'||i.cat==='offers'||i.cat==='community';
+      return i.cat===activeCat;
+    });
+  }
   if(activeStatus!=='all') filtered=filtered.filter(function(i){return i.status===activeStatus;});
   filtered.sort(function(a,b){return b.ts-a.ts;});
   var catLabel=activeCat==='all'?'All Ideas':(IDEA_CATS[activeCat]?IDEA_CATS[activeCat].label:activeCat);
@@ -2440,6 +2488,8 @@ function renderIdeaList(){
   list.innerHTML=filtered.map(function(idea){
     var cat=IDEA_CATS[idea.cat]||{label:idea.cat,icon:''};
     var d=new Date(idea.ts).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    // source tag for auto-captured ideas
+    var sourceTag = idea.source==='evening' ? '<span style="font-family:Montserrat,sans-serif;font-size:.58em;font-weight:800;padding:2px 8px;border-radius:8px;background:rgba(123,111,212,0.12);color:var(--p400);text-transform:uppercase;letter-spacing:.5px">🌙 From Evening</span>' : '';
     return '<div class="idea-card">'+
       '<div class="idea-card-header">'+
         '<div class="idea-card-title">'+escRHtml(idea.title)+'</div>'+
@@ -2448,6 +2498,7 @@ function renderIdeaList(){
       (idea.notes?'<div class="idea-card-notes">'+escRHtml(idea.notes)+'</div>':'')+
       '<div class="idea-card-footer">'+
         '<span class="idea-badge '+idea.cat+'">'+cat.icon+' '+cat.label+'</span>'+
+        sourceTag+
         '<select class="idea-status-sel" onchange="updateIdeaSt(\''+idea.id+'\',this.value)">'+
           '<option value="new" '+(idea.status==='new'?'selected':'')+'>💡 New</option>'+
           '<option value="progress" '+(idea.status==='progress'?'selected':'')+'>🔥 In Progress</option>'+
