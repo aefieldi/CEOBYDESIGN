@@ -1179,8 +1179,20 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
       <div class="nc"><label>Visitors</label><input type="number" id="ciVisitors" min="0" placeholder="0" oninput="saveCI()"><select id="ciVisitorsDir" onchange="saveCI()"><option value="up">↑ Up</option><option value="down">↓ Down</option><option value="same">→ Same</option></select></div>
       <div class="nc"><label>Conversion %</label><input type="number" id="ciConv" min="0" step="0.1" placeholder="0" oninput="saveCI()"><select id="ciConvDir" onchange="saveCI()"><option value="up">↑ Up</option><option value="down">↓ Down</option><option value="same">→ Same</option></select></div>
       <div class="nc"><label>Members</label><input type="number" id="ciMembers" min="0" placeholder="0" oninput="saveCI()"><select id="ciMembersDir" onchange="saveCI()"><option value="up">↑ Up</option><option value="down">↓ Down</option><option value="same">→ Same</option></select></div>
+      <div class="nc"><label>MRR ($)</label><input type="number" id="ciMRR" min="0" placeholder="0" oninput="saveCI()"><select id="ciMRRDir" onchange="saveCI()"><option value="up">↑ Up</option><option value="down">↓ Down</option><option value="same">→ Same</option></select></div>
       <div class="nc"><label>Group Engagement</label><input type="number" id="ciGroupEng" min="0" placeholder="0" oninput="saveCI()"><select id="ciGroupEngDir" onchange="saveCI()"><option value="up">↑ Up</option><option value="down">↓ Down</option><option value="same">→ Same</option></select></div>
       <div class="nc"><label>Profile Activity</label><input type="number" id="ciProfile" min="0" placeholder="0" oninput="saveCI()"><select id="ciProfileDir" onchange="saveCI()"><option value="up">↑ Up</option><option value="down">↓ Down</option><option value="same">→ Same</option></select></div>
+      <div class="nc"><label>Discovery Rank</label><input type="number" id="ciDiscovery" min="0" placeholder="0" oninput="saveCI()"><select id="ciDiscoveryDir" onchange="saveCI()"><option value="up">↑ Up</option><option value="down">↓ Down</option><option value="same">→ Same</option></select></div>
+    </div>
+  </div>
+
+  <div class="card" style="border-color:rgba(125,212,200,0.3)">
+    <div class="card-title">📱 Social & Revenue Stats</div>
+    <div class="card-sub">Auto-calculates direction from yesterday.</div>
+    <div class="num-grid" style="grid-template-columns:repeat(auto-fill,minmax(145px,1fr))">
+      <div class="nc"><label>Instagram Followers</label><input type="number" id="ciIG" min="0" placeholder="0" oninput="saveCI()"><select id="ciIGDir" onchange="saveCI()"><option value="up">↑ Up</option><option value="down">↓ Down</option><option value="same">→ Same</option></select></div>
+      <div class="nc"><label>YouTube Subscribers</label><input type="number" id="ciYT" min="0" placeholder="0" oninput="saveCI()"><select id="ciYTDir" onchange="saveCI()"><option value="up">↑ Up</option><option value="down">↓ Down</option><option value="same">→ Same</option></select></div>
+      <div class="nc"><label>TikTok Followers</label><input type="number" id="ciTT" min="0" placeholder="0" oninput="saveCI()"><select id="ciTTDir" onchange="saveCI()"><option value="up">↑ Up</option><option value="down">↓ Down</option><option value="same">→ Same</option></select></div>
     </div>
   </div>
 
@@ -1858,8 +1870,13 @@ function loadCI(){
   sv('ciVisitors',ci.visitors); sv('ciVisitorsDir',ci.visitorsDir);
   sv('ciConv',ci.conv); sv('ciConvDir',ci.convDir);
   sv('ciMembers',ci.members); sv('ciMembersDir',ci.membersDir);
+  sv('ciMRR',ci.mrr||''); sv('ciMRRDir',ci.mrrDir||'up');
   sv('ciGroupEng',ci.groupEng); sv('ciGroupEngDir',ci.groupEngDir);
   sv('ciProfile',ci.profile); sv('ciProfileDir',ci.profileDir);
+  sv('ciDiscovery',ci.discovery||''); sv('ciDiscoveryDir',ci.discoveryDir||'up');
+  sv('ciIG',ci.ig||''); sv('ciIGDir',ci.igDir||'up');
+  sv('ciYT',ci.yt||''); sv('ciYTDir',ci.ytDir||'up');
+  sv('ciTT',ci.tt||''); sv('ciTTDir',ci.ttDir||'up');
   sv('ciContentNum',ci.contentNum); sv('ciContentLink',ci.contentLink);
   sv('ciDMs',ci.dms); sv('ciAdSpend',ci.adSpend); sv('ciNewAds',ci.newAds);
   sv('ciInsight',ci.insight);
@@ -1877,8 +1894,13 @@ function saveCI(){
   ci.visitors=gv('ciVisitors'); ci.visitorsDir=gv('ciVisitorsDir');
   ci.conv=gv('ciConv'); ci.convDir=gv('ciConvDir');
   ci.members=gv('ciMembers'); ci.membersDir=gv('ciMembersDir');
+  ci.mrr=gv('ciMRR'); ci.mrrDir=gv('ciMRRDir');
   ci.groupEng=gv('ciGroupEng'); ci.groupEngDir=gv('ciGroupEngDir');
   ci.profile=gv('ciProfile'); ci.profileDir=gv('ciProfileDir');
+  ci.discovery=gv('ciDiscovery'); ci.discoveryDir=gv('ciDiscoveryDir');
+  ci.ig=gv('ciIG'); ci.igDir=gv('ciIGDir');
+  ci.yt=gv('ciYT'); ci.ytDir=gv('ciYTDir');
+  ci.tt=gv('ciTT'); ci.ttDir=gv('ciTTDir');
   ci.contentNum=gv('ciContentNum'); ci.contentLink=gv('ciContentLink');
   ci.dms=gv('ciDMs'); ci.adSpend=gv('ciAdSpend'); ci.newAds=gv('ciNewAds');
   ci.insight=gv('ciInsight'); ci.contentType=ciSelectedType;
