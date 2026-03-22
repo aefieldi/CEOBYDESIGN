@@ -261,7 +261,6 @@ pointer-events:none;z-index:0;animation:glitter 5s ease-in-out infinite alternat
 
 /* ══════════════════════════════════════
    GLOBAL INPUT / TEXTAREA / SELECT
-   Single source of truth — no conflicts
 ══════════════════════════════════════ */
 label.fl{
   display:block;font-size:.72em;font-weight:700;
@@ -269,7 +268,6 @@ label.fl{
   color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px
 }
 
-/* Base styles for ALL text inputs, textareas, number inputs, url/date inputs */
 textarea,
 input[type=text],
 input[type=number],
@@ -307,7 +305,6 @@ input[type=date]:focus {
 }
 textarea{resize:vertical;min-height:100px;line-height:1.65}
 
-/* select elements */
 select {
   color: var(--inp-text);
   background: var(--inp-bg);
@@ -323,7 +320,6 @@ select:focus {
   border-color: var(--inp-border-focus);
   box-shadow: var(--inp-shadow-focus);
 }
-/* Make option text legible in dropdowns */
 select option {
   background: #1e1640;
   color: #f0ecff;
@@ -551,12 +547,6 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 .ba-key{color:rgba(210,204,255,0.85);font-weight:300}
 .ba-val{font-weight:700;color:#f0ecff;font-family:'Montserrat',sans-serif;font-size:.92em}
 .ba-diff{font-size:.75em;font-weight:800;padding:2px 9px;border-radius:8px;font-family:'Montserrat',sans-serif}
-.ba-input{
-  color:var(--inp-text) !important;
-  background:var(--inp-bg) !important;
-  border:1.5px solid var(--inp-border) !important;
-}
-.ba-input:focus{border-color:var(--inp-border-focus)!important;outline:none;box-shadow:var(--inp-shadow-focus)}
 .ba-diff.pos{background:rgba(127,119,221,.15);color:var(--p600)}
 .ba-diff.neg{background:rgba(79,191,176,.1);color:#4FBFB0}
 .ba-diff.zero{background:rgba(127,119,221,.08);color:var(--muted)}
@@ -733,7 +723,7 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 }
 
 /* ══════════════════════════════════════
-   WEEKLY RHYTHM — NEW TAB
+   WEEKLY RHYTHM
 ══════════════════════════════════════ */
 .week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:4px}
 @media(max-width:960px){.week-grid{grid-template-columns:repeat(4,1fr)}}
@@ -824,8 +814,7 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 .week-actions-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 
 /* ══════════════════════════════════════
-   IDEA VAULT — NEW TAB
-   (fully fixed — readable inputs on dark bg)
+   IDEA VAULT
 ══════════════════════════════════════ */
 .idea-layout{display:grid;grid-template-columns:260px 1fr;gap:20px;align-items:start}
 @media(max-width:700px){.idea-layout{grid-template-columns:1fr}}
@@ -867,7 +856,6 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
   text-transform:uppercase;letter-spacing:1px;margin-bottom:5px
 }
 
-/* Idea Vault inputs — use the global input system */
 .idea-form-input,
 .idea-form-select,
 .idea-form-textarea{
@@ -970,7 +958,7 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 .idea-empty p{font-size:.85em;font-weight:300;font-style:italic}
 
 /* ══════════════════════════════════════
-   MEMBER GROWTH TRACKER
+   MONTHLY SNAPSHOT
 ══════════════════════════════════════ */
 .mg-layout{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start}
 @media(max-width:800px){.mg-layout{grid-template-columns:1fr}}
@@ -1360,19 +1348,6 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
     </div>
   </div>
 
-  <div class="card" style="margin-top:16px">
-    <div class="card-title">📤 Submit to Amanda</div>
-    <div class="card-sub">Encodes your full 28 days. Copy and paste wherever Amanda asks.</div>
-    <button onclick="genShare()" class="btn-pink">🔗 Generate Submission Link</button>
-    <div id="shareBox" style="display:none;margin-top:14px">
-      <div class="share-row">
-        <input type="text" id="shareLink" readonly>
-        <button onclick="cpShare()" style="margin:0">Copy</button>
-      </div>
-      <div id="shareCopied" style="display:none;color:var(--p400);font-weight:700;font-size:.82em;margin-top:8px;font-family:'Montserrat',sans-serif">✓ Copied!</div>
-    </div>
-  </div>
-
   <div class="btn-row" style="margin-top:16px">
     <button onclick="exportJSON()" class="btn-ghost btn-sm">Export JSON</button>
     <button onclick="clearAll()" class="btn-danger btn-sm">Clear All Data</button>
@@ -1459,10 +1434,8 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
   <div class="sh">📊 Monthly Business Snapshot</div>
   <div class="info-box">Log once a month from your Skool dashboard — takes 2 minutes. Builds your trend data over time so you can see what's actually working.</div>
 
-  <!-- Snapshot history -->
   <div id="snapList"></div>
 
-  <!-- Log form -->
   <div class="card lavender" style="margin-top:8px">
     <div class="card-title">✦ Log This Month</div>
     <div class="card-sub">Pull these numbers from your Skool dashboard → Settings → Dashboard.</div>
@@ -1661,7 +1634,7 @@ function go(id, btn){
 }
 
 // ══════════════════════════════════════════════
-// MOMENTUM BAR  (with MRR Growth tracker)
+// MOMENTUM BAR
 // ══════════════════════════════════════════════
 var mbCollapsed = false;
 function toggleMB(){
@@ -1670,7 +1643,6 @@ function toggleMB(){
   ge('mbToggleBtn').textContent = mbCollapsed ? '▼ Expand' : '▲ Collapse';
 }
 function updateMomentumBar(){
-  // Streak
   var streak=0, d=TODAY;
   while(true){
     var day=DB.days[d];
@@ -1689,12 +1661,12 @@ function updateMomentumBar(){
 
   var dates = Object.keys(DB.days).sort().reverse();
 
-  // Members — latest from MG tab or check-in fallback
+  // Members — latest from monthly snapshots or check-in fallback
   var latestMembers = '—';
-  var mgData = loadMGEntries ? loadMGEntries() : [];
-  if(mgData.length){
-    var sorted = mgData.slice().sort(function(a,b){return b.date.localeCompare(a.date);});
-    if(sorted[0].totalMembers) latestMembers = sorted[0].totalMembers;
+  var snapsData = loadSnaps ? loadSnaps() : [];
+  if(snapsData.length){
+    var sorted = snapsData.slice().sort(function(a,b){return b.month.localeCompare(a.month);});
+    if(sorted[0].members) latestMembers = sorted[0].members;
   }
   if(latestMembers==='—'){
     for(var i=0;i<dates.length;i++){
@@ -1703,21 +1675,23 @@ function updateMomentumBar(){
     }
   }
 
-  // MRR — pull from MG tab (stored MRR) or estimate from members × $8
+  // MRR
   var latestMRR = '—';
   var mrrBaseline = parseFloat(DB.profile.snap&&DB.profile.snap.mrr) || 0;
   var mrrCurrent = 0;
-  if(mgData.length){
-    var sorted2 = mgData.slice().sort(function(a,b){return b.date.localeCompare(a.date);});
-    if(sorted2[0].mrr){ 
+  if(snapsData.length){
+    var sorted2 = snapsData.slice().sort(function(a,b){return b.month.localeCompare(a.month);});
+    if(sorted2[0].mrr){
       mrrCurrent = parseFloat(sorted2[0].mrr);
-      latestMRR = '$' + mrrCurrent.toLocaleString(); 
-    } else if(sorted2[0].totalMembers){ 
-      mrrCurrent = parseInt(sorted2[0].totalMembers)*8;
-      latestMRR = '$'+mrrCurrent.toLocaleString(); 
+      latestMRR = '$' + mrrCurrent.toLocaleString();
     }
   }
-  // Fallback: estimate from members × $8
+  if(mrrCurrent === 0){
+    for(var j=0;j<dates.length;j++){
+      var ci2=DB.days[dates[j]].checkin;
+      if(ci2&&ci2.mrr){ mrrCurrent=parseFloat(ci2.mrr); latestMRR='$'+mrrCurrent.toLocaleString(); break; }
+    }
+  }
   if(mrrCurrent === 0 && latestMembers !== '—') {
     mrrCurrent = parseInt(latestMembers) * 8;
   }
@@ -1737,7 +1711,6 @@ function updateMomentumBar(){
     return '<div class="mb-stat"><div class="mb-stat-n">'+s.n+'</div><div class="mb-stat-l">'+s.l+'</div></div>';
   }).join('');
 
-  // ── Progress bars ──
   var snapMembers = parseInt(DB.profile.snap&&DB.profile.snap.sk)||0;
   var curMembers  = parseInt(latestMembers)||0;
   var memberGrowth = snapMembers>0 ? Math.max(0,curMembers-snapMembers) : 0;
@@ -1745,9 +1718,8 @@ function updateMomentumBar(){
   var contentPct   = Math.min(100,Math.round((totalContent/100)*100));
   var streakPct    = Math.min(100,Math.round((streak/30)*100));
 
-  // MRR growth bar
   var mrrGrowth = mrrBaseline > 0 ? Math.max(0, mrrCurrent - mrrBaseline) : 0;
-  var mrrTarget  = mrrBaseline > 0 ? mrrBaseline * 2 : 5000; // target = 2x baseline or $5k if no baseline
+  var mrrTarget  = mrrBaseline > 0 ? mrrBaseline * 2 : 5000;
   if(mrrTarget === 0) mrrTarget = 5000;
   var mrrPct = Math.min(100, Math.round((mrrGrowth / mrrTarget) * 100));
   var mrrGrowthLabel = mrrGrowth > 0 ? '+$' + mrrGrowth.toLocaleString() : (latestMRR !== '—' ? latestMRR : '$0');
@@ -1764,7 +1736,6 @@ function updateMomentumBar(){
 // ══════════════════════════════════════════════
 function loadM(){
   var d = getDay(mDay);
-  // Auto-fill brain dump from previous day's priorities if dump is currently empty
   var dumpVal = d.morning.dump || '';
   if(!dumpVal) {
     var prevDay = addDays(mDay, -1);
@@ -1819,12 +1790,10 @@ function chDay(tab, dir){
   });
 })();
 
-// Live auto-direction: recalculates arrow the moment a number changes
 function liveAutoDir(inputId, dirId){
   var val = gv(inputId);
   var prevDay = addDays(ciDay,-1);
   var prevCI = (DB.days[prevDay]&&DB.days[prevDay].checkin)||{};
-  // Map input IDs to their prevCI key
   var keyMap = {
     'ciVisitors':'visitors','ciConv':'conv','ciMembers':'members',
     'ciMRR':'mrr','ciGroupEng':'groupEng','ciProfile':'profile',
@@ -1841,7 +1810,6 @@ function liveAutoDir(inputId, dirId){
 
 function loadCI(){
   var d=getDay(ciDay); var ci=d.checkin;
-  // Pull yesterday for auto-direction
   var prevDay=addDays(ciDay,-1);
   var prevCI=(DB.days[prevDay]&&DB.days[prevDay].checkin)||{};
 
@@ -1854,7 +1822,6 @@ function loadCI(){
   }
   function applyDir(fieldId, cur, prev, stored){
     var auto=calcDir(cur,prev);
-    // Use auto if available, fall back to stored value
     sv(fieldId, auto||stored||'up');
   }
 
@@ -1911,11 +1878,9 @@ function generatePost(){
   var dn=getDayNum(ciDay)||'?';
   var dateStr=new Date(ciDay+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
 
-  // Pull yesterday's checkin for auto-direction calculation
   var prevDay=addDays(ciDay,-1);
   var prevCI=(DB.days[prevDay]&&DB.days[prevDay].checkin)||{};
 
-  // Auto-calc direction: compare current vs yesterday, return arrow
   function autoDir(curVal, prevVal){
     var c=parseFloat(curVal), p=parseFloat(prevVal);
     if(isNaN(c)||isNaN(p)||curVal===''||prevVal==='') return '';
@@ -1924,7 +1889,6 @@ function generatePost(){
     return ' →';
   }
 
-  // Format a stat line — only include if value exists
   function statLine(emoji, label, val, prevVal, suffix){
     if(!val&&val!==0) return null;
     var dir = autoDir(val, prevVal);
@@ -1955,7 +1919,6 @@ function generatePost(){
     statLine('📝','Pieces Published',ci.contentNum, prevCI.contentNum,''),
   ].filter(function(l){ return l!==null; });
 
-  // Add content link
   if(ci.contentLink){
     lines.push('🔗 Content'+typeStr+': '+ci.contentLink);
   }
@@ -2040,7 +2003,6 @@ function renderTimerTop3(){
 // ══════════════════════════════════════════════
 function loadE(){
   var d=getDay(eDay); var e=d.evening;
-  // Merge legacy winOfDay into wins if wins is empty
   var winsVal = e.wins || '';
   if(!winsVal && e.winOfDay) winsVal = e.winOfDay;
   sv('eWins', winsVal);
@@ -2069,12 +2031,10 @@ function completeE(){
   showConfetti();
   renderCB();
 
-  // Auto-push content ideas into Idea Vault as a single card
   var ideas_local = loadIdeas();
   var ideaText = gv('eContentIdeas').trim();
   if(ideaText){
     var dateLabel = fmtShort(eDay);
-    // Don't duplicate — check if a card with same date+source already exists
     var alreadyExists = ideas_local.some(function(i){ return i.source==='evening' && i.title===dateLabel+' — Content Ideas'; });
     if(!alreadyExists){
       ideas_local.unshift({
@@ -2157,8 +2117,19 @@ function saveLTContent(ds,v){ if(!ds)return; var d=getDay(ds); d.checkin.content
 function saveLTSkool(day,v,ds){ if(ds){ var d=getDay(ds); d.skoolLink=v; } save(); }
 
 // ══════════════════════════════════════════════
-// PROGRESS
+// PROGRESS — Before & After auto-pulls from most recent check-in
 // ══════════════════════════════════════════════
+function getLatestCheckInWithDate(){
+  var dates=Object.keys(DB.days).sort().reverse();
+  for(var i=0;i<dates.length;i++){
+    var ci=DB.days[dates[i]].checkin;
+    if(ci&&(ci.members||ci.ig||ci.yt||ci.tt||ci.mrr)){
+      return {ci:ci, date:dates[i]};
+    }
+  }
+  return {ci:{}, date:null};
+}
+
 function renderProgress(){
   var dn=getDayNum(TODAY);
   var ph=phaseLabel(dn);
@@ -2169,61 +2140,51 @@ function renderProgress(){
   renderStats();
   if(DB.profile.challengeStart) ge('chStart').value=DB.profile.challengeStart;
 }
+
 function renderBA(){
   var snap=DB.profile.snap||{};
-  if(!DB.profile.currentSnap) DB.profile.currentSnap={};
-  var cur=DB.profile.currentSnap;
-  if(!cur.sk){
-    var dates=Object.keys(DB.days).sort().reverse();
-    for(var i=0;i<dates.length;i++){ var ci=DB.days[dates[i]].checkin; if(ci&&ci.members){ cur.sk=ci.members; break; } }
-  }
+  var latest=getLatestCheckInWithDate();
+  var cur=latest.ci;
+  var srcDate=latest.date ? fmtShort(latest.date) : null;
+
   var fields=[
-    {key:'Members',snapKey:'sk',label:'Skool Members'},
-    {key:'Instagram',snapKey:'ig',label:'Instagram Followers'},
-    {key:'TikTok',snapKey:'tt',label:'TikTok Followers'},
-    {key:'YouTube',snapKey:'yt',label:'YouTube Subscribers'},
-    {key:'MRR ($)',snapKey:'mrr',label:'MRR ($)'}
+    {key:'Members',   snapKey:'sk',  ciKey:'members'},
+    {key:'Instagram', snapKey:'ig',  ciKey:'ig'},
+    {key:'TikTok',    snapKey:'tt',  ciKey:'tt'},
+    {key:'YouTube',   snapKey:'yt',  ciKey:'yt'},
+    {key:'MRR ($)',   snapKey:'mrr', ciKey:'mrr'}
   ];
-  var bef='',aft='';
+
+  var bef='', aft='';
+
   fields.forEach(function(f){
-    var s=snap[f.snapKey]||'—';
-    var c=cur[f.snapKey]||'';
-    var diff=null;
-    if(c&&snap[f.snapKey]){ diff=parseInt(c)-parseInt(snap[f.snapKey]); }
-    var diffHtml='';
-    if(diff!==null&&!isNaN(diff)){ var cls=diff>0?'pos':diff<0?'neg':'zero'; diffHtml=' <span class="ba-diff '+cls+'">'+(diff>0?'+':'')+diff+'</span>'; }
-    bef+='<div class="ba-row"><span class="ba-key">'+f.key+'</span><span class="ba-val">'+s+'</span></div>';
-    aft+='<div class="ba-row" style="gap:8px"><span class="ba-key" style="min-width:80px">'+f.key+'</span>'+
-         '<input type="number" class="ba-input" data-key="'+f.snapKey+'" placeholder="Enter current" value="'+c+'" oninput="saveCurrentSnap(\''+f.snapKey+'\',this.value)" style="width:90px;text-align:right;font-weight:700;font-size:.88em;padding:3px 8px;border-radius:8px;font-family:Montserrat,sans-serif">'+diffHtml+'</div>';
+    var baseline = snap[f.snapKey] || '—';
+    var current  = cur[f.ciKey]   || '—';
+
+    var diff = null;
+    if(current !== '—' && baseline !== '—'){
+      var d = parseInt(current) - parseInt(baseline);
+      if(!isNaN(d)) diff = d;
+    }
+    var diffHtml = '';
+    if(diff !== null){
+      var cls = diff > 0 ? 'pos' : diff < 0 ? 'neg' : 'zero';
+      diffHtml = '<span class="ba-diff '+cls+'">'+(diff > 0 ? '+' : '')+diff+'</span>';
+    }
+
+    bef += '<div class="ba-row"><span class="ba-key">'+f.key+'</span><span class="ba-val">'+baseline+'</span></div>';
+    aft += '<div class="ba-row"><span class="ba-key">'+f.key+'</span><span class="ba-val" style="margin-left:auto">'+current+'</span>'+diffHtml+'</div>';
   });
+
+  var srcLabel = srcDate
+    ? 'auto from '+srcDate
+    : 'enter stats in Check-In tab';
+
   ge('baGrid').innerHTML=
     '<div class="ba-card before"><div class="ba-label">📸 Day 1 Baseline</div>'+bef+'</div>'+
-    '<div class="ba-card after"><div class="ba-label">✨ Current <span style="font-size:.75em;font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">(tap to update)</span></div>'+aft+'</div>';
+    '<div class="ba-card after"><div class="ba-label">✨ Current <span style="font-size:.75em;font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">'+srcLabel+'</span></div>'+aft+'</div>';
 }
-function saveCurrentSnap(key,val){
-  if(!DB.profile.currentSnap) DB.profile.currentSnap={};
-  DB.profile.currentSnap[key]=val;
-  save();
-  var fields=[{snapKey:'sk'},{snapKey:'ig'},{snapKey:'tt'},{snapKey:'yt'},{snapKey:'mrr'}];
-  var snap=DB.profile.snap||{};
-  var cur=DB.profile.currentSnap;
-  fields.forEach(function(f){
-    var c=cur[f.snapKey]||''; var s=snap[f.snapKey];
-    var diffEl=document.querySelector('.ba-input[data-key="'+f.snapKey+'"]');
-    if(!diffEl)return;
-    var row=diffEl.parentElement;
-    var existing=row.querySelector('.ba-diff'); if(existing) existing.remove();
-    if(c&&s){
-      var diff=parseInt(c)-parseInt(s);
-      if(!isNaN(diff)){
-        var sp=document.createElement('span');
-        sp.className='ba-diff '+(diff>0?'pos':diff<0?'neg':'zero');
-        sp.textContent=(diff>0?'+':'')+diff;
-        row.appendChild(sp);
-      }
-    }
-  });
-}
+
 function renderHallOfWins(){
   var el=ge('hallOfWins');
   var dates=Object.keys(DB.days).sort().reverse();
@@ -2295,21 +2256,8 @@ function openDayModal(ds){
 function closeModal(){ ge('modal').style.display='none'; }
 
 // ══════════════════════════════════════════════
-// SHARE / EXPORT
+// EXPORT
 // ══════════════════════════════════════════════
-function genShare(){
-  try{
-    var enc=btoa(unescape(encodeURIComponent(JSON.stringify(DB))));
-    var url=window.location.href.split('?')[0].split('#')[0]+'#review='+enc;
-    ge('shareLink').value=url; ge('shareBox').style.display='block';
-    ge('shareBox').scrollIntoView({behavior:'smooth',block:'center'});
-  }catch(e){ alert('Could not generate link. Try Export JSON instead.'); }
-}
-function cpShare(){
-  navigator.clipboard.writeText(ge('shareLink').value).then(function(){
-    ge('shareCopied').style.display='block'; setTimeout(function(){ge('shareCopied').style.display='none';},4000);
-  }).catch(function(){ ge('shareLink').select(); document.execCommand('copy'); ge('shareCopied').style.display='block'; setTimeout(function(){ge('shareCopied').style.display='none';},4000); });
-}
 function exportJSON(){
   var b=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
   var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='vbd-tracker-'+TODAY+'.json'; a.click();
@@ -2461,7 +2409,6 @@ var IDEA_CATS={
   youtube:    {label:'YouTube Ideas',   icon:'▶️'},
   automations:{label:'Automations',     icon:'⚙️'},
   content:    {label:'Content Ideas',   icon:'✍️'},
-  // legacy — keep so old cards still render
   offers:     {label:'Community Offer', icon:'🎁'},
   community:  {label:'Community Offer', icon:'🎁'}
 };
@@ -2478,7 +2425,6 @@ function renderIdeaCatBtns(){
   ACTIVE_CATS.forEach(function(key){
     var cat=IDEA_CATS[key];
     btns.push({key:key,label:cat.label,icon:cat.icon,count:ideas.filter(function(i){
-      // count legacy keys under their new home
       if(key==='commoffer') return i.cat==='commoffer'||i.cat==='offers'||i.cat==='community';
       return i.cat===key;
     }).length});
@@ -2523,7 +2469,6 @@ function renderIdeaList(){
   list.innerHTML=filtered.map(function(idea){
     var cat=IDEA_CATS[idea.cat]||{label:idea.cat,icon:''};
     var d=new Date(idea.ts).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    // source tag for auto-captured ideas
     var sourceTag = idea.source==='evening' ? '<span style="font-family:Montserrat,sans-serif;font-size:.58em;font-weight:800;padding:2px 8px;border-radius:8px;background:rgba(123,111,212,0.12);color:var(--p400);text-transform:uppercase;letter-spacing:.5px">🌙 From Evening</span>' : '';
     return '<div class="idea-card">'+
       '<div class="idea-card-header">'+
@@ -2573,7 +2518,6 @@ function snapuid(){ return Date.now().toString(36)+Math.random().toString(36).su
 
 var snaps = loadSnaps();
 
-// Set default month to current month
 (function(){
   var el = document.getElementById('snapMonth');
   if(el){
@@ -2608,12 +2552,10 @@ function logSnap(){
     notes: gv2('snapNotes')
   };
 
-  // Replace if same month exists
   var idx = snaps.findIndex(function(s){ return s.month===month; });
   if(idx>=0){ snaps[idx]=entry; } else { snaps.unshift(entry); }
   saveSnaps(snaps);
 
-  // Clear form
   ['snapMembers','snapMRR','snapEngagement','snapRetention','snapVisitors','snapSignups',
    'snapConvRate','snapNewMRR','snapAdSpend','snapFB','snapDirect','snapSkool','snapIG','snapYT','snapNotes'
   ].forEach(function(id){ var e=document.getElementById(id); if(e) e.value=''; });
@@ -2632,7 +2574,6 @@ function deleteSnap(id){
 }
 
 function fmtMonth(m){
-  // m = "2026-03"
   var parts = m.split('-');
   var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, 1);
   return d.toLocaleDateString('en-US',{month:'long',year:'numeric'});
@@ -2656,7 +2597,6 @@ function renderSnapTab(){
       return '<span style="color:'+col+';font-size:.72em;font-weight:800;margin-left:4px">'+(d>0?'↑':'↓')+(prefix||'')+(Math.abs(d))+(suffix||'')+'</span>';
     }
 
-    // Source breakdown bar
     var totalSrc = (s.sources.fb||0)+(s.sources.direct||0)+(s.sources.skool||0)+(s.sources.ig||0)+(s.sources.yt||0);
     var srcBar = '';
     if(totalSrc>0){
@@ -2684,7 +2624,6 @@ function renderSnapTab(){
         '</div></div>';
     }
 
-    // Cost per signup
     var cps = (s.adSpend>0 && s.signups>0) ? '$'+(s.adSpend/s.signups).toFixed(2)+'/signup' : '';
 
     return '<div class="card" style="margin-bottom:14px">'+
@@ -2692,8 +2631,6 @@ function renderSnapTab(){
         '<div style="font-family:Montserrat,sans-serif;font-size:1em;font-weight:900;color:var(--ink);text-transform:uppercase;letter-spacing:.8px">'+fmtMonth(s.month)+'</div>'+
         '<button onclick="deleteSnap(\''+s.id+'\')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.85em;opacity:.35;padding:2px 6px;margin:0;box-shadow:none;transform:none">🗑</button>'+
       '</div>'+
-
-      // Overview row
       '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:12px">'+
         [
           {l:'Members',   v:s.members,    d:diff(s.members,    prev&&prev.members,    '',  ''),  gold:false},
@@ -2707,8 +2644,6 @@ function renderSnapTab(){
           '</div>';
         }).join('')+
       '</div>'+
-
-      // Growth row
       '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-bottom:12px">'+
         [
           {l:'Visitors',    v:s.visitors.toLocaleString()},
@@ -2724,17 +2659,14 @@ function renderSnapTab(){
           '</div>';
         }).join('')+
       '</div>'+
-
       srcBar+
-
       (s.notes?'<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr);font-size:.83em;color:var(--muted);line-height:1.6;font-weight:300;font-style:italic">'+escRHtml(s.notes)+'</div>':'')+
     '</div>';
   }).join('');
 }
 
-// Keep loadMGEntries function alive so MRR bar in momentum still works from old data
+// Legacy compat
 function loadMGEntries(){ try{return JSON.parse(localStorage.getItem('fos_mg_entries')||'[]');}catch(e){return[];} }
-
 
 var _origGo=go;
 go=function(id,btn){
@@ -2743,7 +2675,6 @@ go=function(id,btn){
   if(id==='ideas'){renderIdeaCatBtns();renderIdeaList();}
   if(id==='growth')renderSnapTab();
 };
-
 
 // ══════════════════════════════════════════════
 // DATA IMPORT
@@ -2763,9 +2694,6 @@ function doImport(data){
       }
       if(data.profile.challengeStart && !DB.profile.challengeStart){
         DB.profile.challengeStart = data.profile.challengeStart;
-      }
-      if(data.profile.currentSnap && !DB.profile.currentSnap){
-        DB.profile.currentSnap = data.profile.currentSnap;
       }
     }
     localStorage.setItem('vbd_v4', JSON.stringify(DB));
