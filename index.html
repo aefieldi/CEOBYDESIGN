@@ -735,7 +735,7 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
   border-radius:var(--radius);
   padding:14px 12px 12px;
   box-shadow:0 4px 20px rgba(40,20,120,0.3);
-  min-height:190px;
+  min-height:120px;
   transition:all .2s;
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)
 }
@@ -1047,8 +1047,43 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 }
 .mg-cpl-good{color:#2d8f5a;font-weight:800}
 .mg-cpl-ok{color:var(--p400);font-weight:800}
-.mg-cpl-high{color:#4FBFB0;font-weight:800}
-.mg-empty{text-align:center;padding:40px;color:var(--muted);font-size:.85em;font-style:italic;font-weight:300}
+/* ══════════════════════════════════════
+   LIFE RATINGS
+══════════════════════════════════════ */
+.life-rating-row{display:flex;align-items:center;gap:12px}
+.lrr-label{font-family:'Montserrat',sans-serif;font-size:.72em;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;min-width:110px}
+.life-slider{flex:1;-webkit-appearance:none;appearance:none;height:6px;border-radius:6px;background:rgba(160,148,240,0.2);outline:none;cursor:pointer}
+.life-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,var(--p400),#4FBFB0);cursor:pointer;box-shadow:0 2px 8px rgba(123,111,212,0.4)}
+.life-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,var(--p400),#4FBFB0);cursor:pointer;border:none;box-shadow:0 2px 8px rgba(123,111,212,0.4)}
+.lrr-val{font-family:'Montserrat',sans-serif;font-size:1.1em;font-weight:900;min-width:28px;text-align:right;background:linear-gradient(135deg,var(--p400),#4FBFB0);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+
+#letterPanel p{margin-bottom:12px}
+.ltr-section{
+  font-family:'Montserrat',sans-serif;font-size:.68em;font-weight:900;
+  letter-spacing:2.5px;text-transform:uppercase;color:var(--p200);
+  margin:20px 0 12px;display:block
+}
+.ltr-divider{
+  text-align:center;color:rgba(160,148,240,0.5);
+  font-size:1em;letter-spacing:6px;
+  margin:20px 0;display:block
+}
+.ltr-breath{
+  font-family:'Montserrat',sans-serif;font-size:.7em;font-weight:900;
+  letter-spacing:3px;text-transform:uppercase;color:#4FBFB0;
+  text-align:center;display:block;margin:16px 0
+}
+.ltr-emphasis{
+  font-style:italic;
+  color:rgba(240,236,255,0.95);
+  border-left:2px solid rgba(123,111,212,0.5);
+  padding:12px 18px;margin:16px 0;
+  line-height:1.8;display:block;
+  background:rgba(123,111,212,0.06);
+  border-radius:0 8px 8px 0
+}
+
 
 </style>
 </head>
@@ -1090,7 +1125,9 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
   <button class="tab-btn" onclick="go('links',this)">🔗 Links</button>
   <button class="tab-btn" onclick="go('progress',this)">📈 Progress</button>
   <button class="tab-btn" onclick="go('rhythm',this)">📅 Weekly Rhythm</button>
+  <button class="tab-btn" onclick="go('weekreview',this)">🔍 Weekly Review</button>
   <button class="tab-btn" onclick="go('ideas',this)">✨ Idea Vault</button>
+  <button class="tab-btn" onclick="go('storybank',this)">📖 Story Bank</button>
   <button class="tab-btn" onclick="go('growth',this)">📊 Monthly Snapshot</button>
 </div>
 
@@ -1118,16 +1155,179 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
     <span class="step-label">Step 2</span>
     <div class="card-title">✨ Connect with Your Highest Self</div>
     <div class="card-sub">Touch your token · Read your letter · Ask: <em style="color:#7DD4C8">"What do WE focus on today?"</em></div>
-    <div style="
-      background:rgba(123,111,212,0.15);
-      border:1px solid rgba(123,111,212,0.3);
-      border-radius:var(--radius-sm);
-      padding:16px 20px;
-      font-size:.88em;
-      color:rgba(200,192,255,0.85);
-      line-height:1.7;
-      font-style:italic
-    ">Get quiet. Breathe. Let your highest self speak before the day does. No input needed here — just be present.</div>
+    <div style="background:rgba(123,111,212,0.15);border:1px solid rgba(123,111,212,0.3);border-radius:var(--radius-sm);padding:16px 20px;font-size:.88em;color:rgba(200,192,255,0.85);line-height:1.7;font-style:italic;margin-bottom:14px">Get quiet. Breathe. Let your highest self speak before the day does. No input needed here — just be present.</div>
+    <button onclick="toggleLetter()" id="letterToggleBtn" style="width:100%;background:linear-gradient(135deg,rgba(123,111,212,0.2),rgba(79,191,176,0.15));border:1.5px solid rgba(160,148,240,0.4);border-radius:var(--radius-sm);color:rgba(220,210,255,0.95);font-family:Montserrat,sans-serif;font-size:.75em;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:12px;cursor:pointer;transition:all .2s;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px">
+      <span id="letterToggleArrow">▾</span> Read Your Letter from Future Amanda
+    </button>
+    <div id="letterPanel" style="display:none;margin-top:14px;background:rgba(15,10,40,0.6);border:1px solid rgba(160,148,240,0.25);border-radius:var(--radius-sm);padding:28px 26px;max-height:70vh;overflow-y:auto;line-height:1.85;font-size:.88em;color:rgba(220,212,255,0.9)">
+      <div style="text-align:center;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid rgba(160,148,240,0.2)">
+        <div style="font-family:Montserrat,sans-serif;font-size:1.05em;font-weight:900;background:linear-gradient(135deg,var(--p400),#4FBFB0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">Morning Visualization · Future Self Meditation · V4</div>
+        <div style="font-family:Montserrat,sans-serif;font-size:.72em;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase">A Day in the Life of Amanda</div>
+        <div style="font-size:.78em;color:rgba(160,148,240,0.6);margin-top:4px;font-style:italic">Read slowly · ~15 minutes · Present tense · Valencia, Spain</div>
+      </div>
+
+      <div class="ltr-divider">· · ·</div>
+
+      <div class="ltr-section">Induction · Going Deep</div>
+      <p>Close your eyes.</p>
+      <p class="ltr-breath">[ BREATHE ]</p>
+      <p>Inhale slowly through your nose... feel your chest rise... your belly expand... and release. Let it all go.</p>
+      <p>Again. Deeper this time. In through the nose... hold for just a moment... and out through the mouth, slow and complete.</p>
+      <p class="ltr-breath">[ ONE MORE TIME ]</p>
+      <p>Good. Let your body become heavy now. Feel the weight of your legs, your arms, your shoulders — let gravity do its work. You don't have to hold anything up. You don't have to figure anything out. You don't have to be anywhere but right here, right now, in this moment of complete and total receiving.</p>
+      <p>Your conscious mind can rest. What's about to happen happens below the surface — in the part of you that already knows, that has always known, that has been quietly holding the blueprint of this life all along.</p>
+      <p class="ltr-breath">[ FEEL YOURSELF DROPPING DEEPER ]</p>
+      <p>This is not a fantasy. This is not wishful thinking. This is a memory from your future — and your nervous system cannot tell the difference between what is vividly imagined and what is real. So let it be real. Let every scene land in your body, not just your mind.</p>
+      <p class="ltr-emphasis">You are Amanda. And this is already your life.</p>
+
+      <div class="ltr-divider">· · ·</div>
+
+      <div class="ltr-section">The Bridge · Who You Always Were</div>
+      <p>Before we go to Valencia, go back for a moment.</p>
+      <p class="ltr-breath">[ BREATHE ]</p>
+      <p>There's a little girl. She's getting dressed for school. And she doesn't ask anyone's permission — she opens her drawer and pulls out red tights, red Mary Jane clogs, an orange tutu skirt with flowers, a hot pink top, mismatching socks.</p>
+      <p>She looks in the mirror and she is completely, totally satisfied.</p>
+      <p>That girl was never confused about who she was. She was never waiting for approval. She dressed for herself and walked out the door like a small, magnificent, completely unbothered force of nature.</p>
+      <p>That girl is you. She was always you.</p>
+      <p>And everything you have built — the community, the brand, the life in Valencia, the stage, the recognition — is just that little girl, grown up, given a platform, and finally, finally allowed to be exactly as loud and specific and herself as she always was.</p>
+      <p class="ltr-emphasis">You are the woman who never stopped being that girl.<br><br>You just found a bigger room to do it in.</p>
+      <p class="ltr-breath">[ LET THAT SETTLE ]</p>
+
+      <div class="ltr-divider">· · ·</div>
+
+      <div class="ltr-section">8:00 AM · Valencia · The Morning Light</div>
+      <p>You wake naturally.</p>
+      <p class="ltr-breath">[ BREATHE ]</p>
+      <p>The morning light in Valencia hits different. Not like Split — not that sharp Adriatic white that practically slapped you awake. This is golden. Warm. It pours through the floor-to-ceiling doors of your balcony like it has been waiting all night just to find you.</p>
+      <p>You lie still and feel it on your face. You can hear the pool outside — that soft, constant sound of water moving — and it lands in your body the way it always does, like a signal: <em>You're home. You made it. This is real.</em></p>
+      <p>Milos is beside you. He reaches for you before he's fully awake. You stay tangled in the warmth for a few minutes — unhurried, completely at ease — and you think, not for the first time, about what he said to you once when you were still doubting yourself, still wondering if any of this would work:</p>
+      <p style="font-style:italic;padding:12px 18px;border-left:2px solid rgba(160,148,240,0.4);margin:12px 0;color:rgba(220,212,255,0.95)">"I've always believed in you. From the very beginning."</p>
+      <p>He meant it then. He means it now. And you let yourself receive it — all the way in, no deflecting, no minimizing — because you have learned that being loved like this is not luck. It is what you chose, and what chose you back.</p>
+      <p>The walls around you are covered in photographs. Santiago. Shanghai. ULTRA — a blurry, laughing, completely unhinged photo that neither of you can look at without losing it. Croatia, the place that made you both. Every frame a moment neither of you wanted to end.</p>
+      <p>At the foot of the bed, Jackson. Gray-muzzled and content, tail doing that slow, happy thump against the warm stone. Perfect health. Both of you.</p>
+
+      <div class="ltr-divider">· · ·</div>
+
+      <div class="ltr-section">The Closet · Dressing as Her</div>
+      <p>You open your closet.</p>
+      <p class="ltr-breath">[ BREATHE ]</p>
+      <p>And every single thing inside it is something you absolutely love.</p>
+      <p>No more holding onto things that don't fit or don't feel right. No more clothes that belong to an older, smaller, less expressed version of you. This closet is a curation — it's a declaration. Matching athleisure sets in soft, beautiful colors for your mornings. Sundresses that fit your body perfectly, that make you feel sexy and feminine and completely at ease in your own skin. Lingerie that you buy for yourself, because you deserve to feel that way every single day.</p>
+      <p>You choose something you love. You put it on. You look in the mirror.</p>
+      <p class="ltr-emphasis">You are a size four and strong and radiant.<br><br>Not because you punished yourself into it —<br><br>because you finally started loving the body that carries all of this.</p>
+      <p>This is what it feels like to dress for yourself. The little girl in the orange tutu knew. You know it again now, for good.</p>
+
+      <div class="ltr-divider">· · ·</div>
+
+      <div class="ltr-section">8:30 AM · The Sacred Morning · The Hours That Belong to You</div>
+      <p>You don't reach for your phone.</p>
+      <p class="ltr-breath">[ BREATHE ]</p>
+      <p>Milos already knows. He respects this time completely — it's yours, and he has never once made you feel like you should rush through it or skip it for him. That's love that actually fits your design.</p>
+      <p>You move to your meditation corner. Light something. Sit down. Go quiet. You pray. You journal. You let the answers rise — because clarity comes from the Creator, not from strategy or force or the noise of what everyone else is doing. You have learned this in your body now, not just your head.</p>
+      <p class="ltr-breath">[ PAUSE · RECEIVE ]</p>
+      <p>Then your mat on the balcony — this ridiculous, gorgeous balcony you manifested down to the tile. Yoga, moving through your flow while Valencia wakes up below. Jackson curled in his sunspot by the door, gray-muzzled and content.</p>
+      <p>Then a walk. Milos joins you, coffee in hand, pointing out a new restaurant he wants to try. He says something and you lose it — completely lose it, right there on the street, Cortado going everywhere — and a couple nearby smiles at you like they're watching a movie. You can tell they can see it. Two people so obviously, embarrassingly, beautifully in love.</p>
+      <p>You're home by ten. The morning has already been full. Already been yours.</p>
+
+      <div class="ltr-divider">· · ·</div>
+
+      <div class="ltr-section">10:30 AM · The Workspace · Where the Magic Runs</div>
+      <p>You walk into your workspace and feel it immediately — that settled, creative, <em>this is mine</em> feeling.</p>
+      <p class="ltr-breath">[ BREATHE ]</p>
+      <p>The standing desk is raised today. The walking pad hums quietly beneath your feet as you start moving — two screens, your laptop on its raised platform, natural light flooding in from the sunroom that overlooks the pool. This space was designed around how you actually work: in movement, in beauty, in flow.</p>
+      <p>In the background, your Skool Games trophy catches the light. Beside it: your numerology, your oracle cards, incense curling smoke toward the ceiling. And on the wall — a neon sign that reads <em>Soft Life. Savage Execution.</em> — glowing against a wall of living greenery, lush and green and completely, perfectly you.</p>
+      <p>In the corner: your recording studio. The Rode podcast mic. The DJI Osmo Pocket. Soft lighting. A cozy chair. This is where you stream your Q&As, where you film your YouTube videos, where you show up again and again as the woman your people came looking for.</p>
+      <p class="ltr-emphasis">You are the queen of ads and spiritual marketing on Skool.<br><br>You didn't claim that title. You built it.<br><br>One member, one video, one honest piece of content at a time.</p>
+
+      <div class="ltr-divider">· · ·</div>
+
+      <div class="ltr-section">The Dashboard · The Numbers That Feel Normal</div>
+      <p>You glance at your dashboard.</p>
+      <p class="ltr-breath">[ BREATHE ]</p>
+      <p>1,286 members inside Spiritual Business Skool. 862 in Standard. 283 in Premium. 141 in VIP. And the monthly recurring revenue — <strong style="color:#4FBFB0">$37,017</strong> — sitting there on the screen like it's the most ordinary thing in the world.</p>
+      <p>Because it is, now. It is ordinary now.</p>
+      <p>You remember when $8,000 a month felt like a dream. You remember writing it down, saying it out loud, wondering if you were delusional for believing it. And now $37,000 months are just... Tuesday. The floor keeps rising and you keep letting it.</p>
+      <p>Your affiliate revenue just crossed $50,000 in total earnings — people starting Skool through your link, building their own communities, expanding your impact in directions you didn't even plan for.</p>
+      <p>Your ads are running clean. Under $10 per member acquired. Payback period of six weeks. You are testing two to three new creatives per week — and campaigns that consistently convert are running in the background every single hour of every single day, whether you're working or walking or dancing at ULTRA.</p>
+      <p>You check Stripe and feel — gratitude. Quiet, settled, <em>of course</em> gratitude. Not relief. Not shock. The frequency of someone who expected this, because she built it correctly, and then had the discipline to trust it.</p>
+
+      <div class="ltr-divider">· · ·</div>
+
+      <div class="ltr-section">11:30 AM · Revenue Lab Live · Your Gift in Motion</div>
+      <p>Premium members submitted their questions in advance.</p>
+      <p class="ltr-breath">[ BREATHE ]</p>
+      <p>You settle into your recording corner. The mic is warm. The light is right. You press record.</p>
+      <p>You answer every question like you're sitting across from them at that Valencia café — warm, direct, grounded, occasionally a little funny. No performance. No hustle energy. Just you, fully present, doing the thing you were built to do.</p>
+      <p>Someone leaves a comment: <em>"I have been looking for someone who talks about business like this my whole life."</em> You screenshot it — not for ego, but for the days you forget.</p>
+      <p class="ltr-breath">[ BREATHE ]</p>
+      <p class="ltr-emphasis">This is your design working. You are a Self-Projected Projector. Being recognized, being invited, sharing your gift with people who genuinely want it — this is not work. This is what happens when your life is finally structured correctly.</p>
+
+      <div class="ltr-divider">· · ·</div>
+
+      <div class="ltr-section">Afternoon · The Salt Coffee · Being Loved Completely</div>
+      <p>You close the laptop just after noon.</p>
+      <p class="ltr-breath">[ BREATHE ]</p>
+      <p>The afternoon is yours. You work four days a week, and you stop at six. Because your energy is the asset, and you protect it accordingly now — not out of fear, but out of deep, practiced self-knowledge.</p>
+      <p>You're at your desk later, in a flow, when you hear Milos in the kitchen. A few minutes later he appears. Your Vietnamese salt coffee — made exactly the way you love it — set gently beside your keyboard. His hands on your shoulders. A kiss on the top of your head. He doesn't need anything back. He just sees you. Shows up for you. Loves you in the specific, daily, physical language of someone who genuinely wants you to thrive.</p>
+      <p class="ltr-breath">[ FEEL THIS IN YOUR BODY · ALL THE WAY IN ]</p>
+      <p>All of it. He chose all of it.</p>
+      <p class="ltr-emphasis">You are a woman who is deeply, specifically, completely loved.<br><br>And you receive it now — all the way in — without flinching.</p>
+
+      <div class="ltr-divider">· · ·</div>
+
+      <div class="ltr-section">Content From Your Life · The Platform · The Flywheel</div>
+      <p>You step onto the balcony with your DJI in your hand.</p>
+      <p class="ltr-breath">[ BREATHE ]</p>
+      <p>Something is moving through you — an idea, a download, a stream-of-consciousness insight — and you let yourself be the gangster you are on the internet. No overthinking. No wondering what people will think. Just you, talking about what's real and exciting and alive for you right now, exactly the way that little girl in the mismatching socks used to walk out the door.</p>
+      <p>You go viral on TikTok and Instagram all the time now. Not because you chased it — because you stopped trying to be palatable and started being yourself, and it turns out yourself is exactly what people were looking for.</p>
+      <p class="ltr-emphasis">You are known for your no-BS spiritual business content.<br><br>For your stream-of-consciousness downloads.<br><br>For letting yourself be fully, unapologetically, specifically you —<br><br>and trusting that your people will find you because of it, not in spite of it.</p>
+
+      <div class="ltr-divider">· · ·</div>
+
+      <div class="ltr-section">The Skool Games · The Emotional Peak · The Room Where Everything Became Real</div>
+      <p>Let yourself go back to that room now.</p>
+      <p class="ltr-breath">[ BREATHE DEEPLY ]</p>
+      <p>Los Angeles. The Skool Games. You walked in with your Spanish residency in your pocket, 1,286 members back home, and a quiet knowing in your body that something had already permanently shifted.</p>
+      <p class="ltr-emphasis" style="font-size:1.05em">You won.</p>
+      <p class="ltr-breath">[ STAY HERE · LET IT LAND FULLY ]</p>
+      <p>Feel what that felt like in your chest. The announcement. The room. The people around you. The Skool Games trophy that now sits on your desk in Valencia, catching the afternoon light every single day as a reminder: you did it. Not their way. Your way.</p>
+      <p>Evelyn was there. She shouted you out in front of her entire community. She brought you on stage with her. And when she hugged you, you both knew — this is what it looks like when a mentor sees something real in someone and neither of them gives up.</p>
+      <p>And Sam Ovens came to you. Not the other way around. He said: <em>"We've been watching you since the School 100. And in the past few months, you've just taken off."</em></p>
+      <p>And Alex Hormozi walked over to you. He approached you first. He said he had been watching you grow and that your conversion strategy was unlike anything he had seen in this space. Then he leaned in: <em>"I know I'm a Manifesting Generator. But what does that actually mean?"</em> And you smiled — because of course. Of course the intersection that nobody else believed in turned out to be the most interesting thing in the room to the most interesting people in the room.</p>
+      <p class="ltr-emphasis">Every single one of those moments was an invitation.<br><br>And every invitation arrived because you had already recognized yourself —<br><br>before anyone else did, before the proof existed, before it was safe.<br><br>You recognized yourself first.<br><br>And the world reorganized itself around that recognition.</p>
+
+      <div class="ltr-divider">· · ·</div>
+
+      <div class="ltr-section">Evening · The Pool · The People · The Life You Built</div>
+      <p>The sun softens over Valencia.</p>
+      <p class="ltr-breath">[ BREATHE ]</p>
+      <p>Tonight you have people over. Members who flew in, friends who live nearby, people who came because being in your actual physical presence is different from being in your orbit online — and they wanted the real thing.</p>
+      <p>Milos is at the grill. Ćevapčići sizzling, the smell of smoke and herbs in the warm evening air. You're at the outdoor bar making margaritas — salt rim perfect, laughing at something someone just said. Jackson is weaving through everyone, tail high, getting adored. The fire is lit. The pool glows blue behind it all.</p>
+      <p>You lean back and look around at these people — at this table, this house, this life — and you feel it. Not as a thought. As a full-body knowing that rises up from somewhere below language:</p>
+      <p class="ltr-emphasis" style="font-size:1.05em">Everything is working together.</p>
+      <p class="ltr-breath">[ STAY HERE · BREATHE IT IN ]</p>
+
+      <div class="ltr-divider">· · ·</div>
+
+      <div class="ltr-section">Integration · Sealing the Frequency · Coming Back As Her</div>
+      <p>Take one long, slow breath now.</p>
+      <p class="ltr-breath">[ BREATHE DEEPLY ]</p>
+      <p>Feel your body. The surface beneath you. The room around you. Come back slowly, gently, carrying everything you just felt with you.</p>
+      <p>Your subconscious mind has received this. It does not know the difference between what you have vividly imagined and what you have lived. Which means that right now, at the level that matters most, you have already been her. You have already felt $37,000 months as ordinary. You have already stood on that stage.</p>
+      <p>Your nervous system now has a reference point for this life. And it will begin to move toward what it recognizes as home.</p>
+      <p class="ltr-breath">[ PAUSE · LET IT INTEGRATE ]</p>
+      <p>Whenever the doubt comes — and it will come, because you are human — remember that little girl. Red tights. Orange tutu. Mismatching socks. Walking out the door completely unbothered, completely herself, completely sure that she was exactly right.</p>
+      <p>She was never confused about who she was. And neither are you.</p>
+      <p>All the answers are within you and the Creator. You have the support. You have the systems. You have the structure. You just keep going — not from pressure, but from clarity. Not from force, but from faith. Not from hustle, but from the deep, settled knowing that what is meant for you cannot miss you.</p>
+      <p class="ltr-emphasis" style="font-size:1.1em">The work always works.</p>
+      <p class="ltr-breath">[ ONE FINAL BREATH ]</p>
+      <p class="ltr-emphasis">Soft life. Savage execution.</p>
+      <p style="font-style:italic;color:rgba(200,192,255,0.7)">When you're ready — gently, slowly — open your eyes.</p>
+      <p class="ltr-emphasis" style="font-size:1.15em">Come back as her.</p>
+
+      <div class="ltr-divider">· · ·</div>
+      <p style="text-align:center;font-family:Montserrat,sans-serif;font-size:.8em;font-weight:800;color:var(--gold);letter-spacing:1px">That's your Tuesday, Amanda.<br><span style="font-weight:400;font-size:.9em;color:var(--muted)">Pretty average one, actually. 💛</span></p>
+    </div>
   </div>
 
   <div class="card">
@@ -1369,7 +1569,7 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
 <!-- ══════════════════ WEEKLY RHYTHM ══════════════════ -->
 <div id="rhythm" class="panel">
   <div class="sh">📅 Weekly Rhythm Board</div>
-  <div class="info-box">Your recurring weekly operating cadence. Tasks persist every week — checkboxes reset each Monday. Add or remove tasks any time.</div>
+  <div class="info-box">Your recurring weekly operating cadence. Tasks persist every week — checkboxes reset each Monday. Drag from the Backlog Pool below to assign tasks to specific days.</div>
 
   <div class="week-actions-row">
     <button class="btn-ghost btn-sm" onclick="checkAllToday()">✓ Check All Today</button>
@@ -1378,12 +1578,139 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
   </div>
 
   <div class="week-grid" id="weekGrid"></div>
+
+  <!-- BACKLOG POOL -->
+  <div class="sh" style="margin-top:32px">🗂️ Unscheduled Task Pool</div>
+  <div class="info-box" style="margin-bottom:12px">Tasks that live here have no fixed day — pull them into a day column when you're ready to schedule them this week. Good for: recurring community tasks, exit survey, one-off projects.</div>
+
+  <div id="backlogPool" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;min-height:60px;padding:14px;background:rgba(255,255,255,0.04);border:1.5px dashed rgba(160,148,240,0.3);border-radius:16px;align-items:flex-start;align-content:flex-start"></div>
+
+  <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px">
+    <div style="flex:1;min-width:200px">
+      <label class="fl">New pool task</label>
+      <input type="text" id="backlogInput" placeholder="e.g. Loom welcome videos, exit survey, comment in skoolers..." style="border-radius:10px">
+    </div>
+    <button class="btn-ghost btn-sm" onclick="addBacklogTask()" style="height:40px;margin-bottom:1px">+ Add to Pool</button>
+  </div>
+  <div style="font-size:.72em;color:var(--muted);font-family:Montserrat,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.8px">Click a pool task → choose a day to assign it, or click ✕ to remove</div>
+</div>
+
+<!-- ══════════════════ WEEKLY REVIEW ══════════════════ -->
+<div id="weekreview" class="panel">
+  <div class="sh">🔍 Weekly Review</div>
+  <div class="info-box">A dedicated space to close out each week with intention. Reflect, spot patterns, and plan forward. Takes ~10 minutes. Highly recommended on Sundays.</div>
+
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+    <div>
+      <label class="fl">Week ending</label>
+      <input type="date" id="wrDate" style="width:auto">
+    </div>
+    <div style="margin-left:auto">
+      <button class="btn-p btn-sm" onclick="saveWeekReview()">✦ Save Review</button>
+    </div>
+  </div>
+
+  <!-- MOMENTUM NUMBERS -->
+  <div class="card lavender">
+    <div class="card-title">📊 This Week's Numbers</div>
+    <div class="card-sub">Pull from your Skool dashboard. Quick snapshot of where you landed.</div>
+    <div class="num-grid" style="grid-template-columns:repeat(auto-fill,minmax(145px,1fr))">
+      <div class="nc"><label>Members</label><input type="number" id="wrMembers" placeholder="266" min="0"></div>
+      <div class="nc"><label>MRR ($)</label><input type="number" id="wrMRR" placeholder="1685" min="0"></div>
+      <div class="nc"><label>Content Pieces</label><input type="number" id="wrContent" placeholder="0" min="0"></div>
+      <div class="nc"><label>New Members</label><input type="number" id="wrNewMembers" placeholder="0" min="0"></div>
+      <div class="nc"><label>Ad Spend ($)</label><input type="number" id="wrAdSpend" placeholder="0" min="0"></div>
+      <div class="nc"><label>YouTube Videos</label><input type="number" id="wrYT" placeholder="0" min="0"></div>
+    </div>
+  </div>
+
+  <!-- WINS -->
+  <div class="card win">
+    <div class="card-title">⭐ What Went Well</div>
+    <div class="card-sub">Wins, moments of flow, things that felt aligned. Be specific. This is your evidence bank.</div>
+    <textarea id="wrWins" placeholder="e.g. Hit 5 new premium members from the ad, recorded 3 YouTube videos in one session, Revenue Lab call had amazing energy..." style="min-height:110px" oninput="autoSaveWR()"></textarea>
+  </div>
+
+  <!-- DIDN'T WORK -->
+  <div class="card" style="border-color:rgba(200,144,200,0.3)">
+    <div class="card-title">🪞 What Didn't Work / Felt Off</div>
+    <div class="card-sub">Not self-criticism — data collection. What drained you? What flopped? What should you stop or delegate?</div>
+    <textarea id="wrDidntWork" placeholder="e.g. Spent 2 hours editing when I should've outsourced, posted on TikTok without a strategy, burned energy on a call I should've declined..." style="min-height:110px" oninput="autoSaveWR()"></textarea>
+  </div>
+
+  <!-- LESSONS -->
+  <div class="card">
+    <div class="card-title">💡 Key Lessons & Patterns</div>
+    <div class="card-sub">What did this week teach you? About your energy, your audience, your content, your systems?</div>
+    <textarea id="wrLessons" placeholder="e.g. Short-form content from YouTube videos performs way better than original reels, I do my best work on Tuesdays before noon..." style="min-height:100px" oninput="autoSaveWR()"></textarea>
+  </div>
+
+  <!-- NEXT WEEK -->
+  <div class="card lavender">
+    <div class="card-title">🚀 Focus for Next Week</div>
+    <div class="card-sub">Max 3 outcomes. Not tasks — outcomes. What does "winning next week" look like?</div>
+    <div class="field"><label class="fl">Priority 1</label><input type="text" id="wrP1" placeholder="e.g. Record 2 YouTube videos" oninput="autoSaveWR()"></div>
+    <div class="field"><label class="fl">Priority 2</label><input type="text" id="wrP2" placeholder="e.g. Set up exit survey for members" oninput="autoSaveWR()"></div>
+    <div class="field"><label class="fl">Priority 3</label><input type="text" id="wrP3" placeholder="e.g. Post in 3 external communities" oninput="autoSaveWR()"></div>
+  </div>
+
+  <!-- ENERGY CHECK -->
+  <div class="card">
+    <div class="card-title">⚡ This Week's Energy</div>
+    <div class="card-sub">Overall — how sustainable did this week feel as a Projector?</div>
+    <div class="energy-btns" id="wrEnergyBtns">
+      <button class="e-btn" data-v="1" onclick="setWREnergy(1)">1 😩</button>
+      <button class="e-btn" data-v="2" onclick="setWREnergy(2)">2 😔</button>
+      <button class="e-btn" data-v="3" onclick="setWREnergy(3)">3 😐</button>
+      <button class="e-btn" data-v="4" onclick="setWREnergy(4)">4 🙂</button>
+      <button class="e-btn" data-v="5" onclick="setWREnergy(5)">5 😊</button>
+      <button class="e-btn" data-v="6" onclick="setWREnergy(6)">6 😄</button>
+      <button class="e-btn" data-v="7" onclick="setWREnergy(7)">7 🤩</button>
+      <button class="e-btn" data-v="8" onclick="setWREnergy(8)">8 🔥</button>
+      <button class="e-btn" data-v="9" onclick="setWREnergy(9)">9 ⚡</button>
+      <button class="e-btn" data-v="10" onclick="setWREnergy(10)">10 🌟</button>
+    </div>
+  </div>
+
+  <!-- LIFE RATINGS -->
+  <div class="card" style="border-color:rgba(212,184,106,0.3)">
+    <div class="card-title">🌟 Life Ratings This Week</div>
+    <div class="card-sub">Rate each area 1–10. Spot patterns week over week — where are you thriving? Where needs attention?</div>
+    <div style="display:flex;flex-direction:column;gap:18px;margin-top:8px">
+      <div class="life-rating-row">
+        <div class="lrr-label">💚 Health</div>
+        <input type="range" id="wrHealth" min="1" max="10" value="5" oninput="updateLRDisplay('wrHealth','wrHealthVal')" class="life-slider">
+        <span class="lrr-val" id="wrHealthVal">5</span>
+      </div>
+      <div class="life-rating-row">
+        <div class="lrr-label">💰 Wealth</div>
+        <input type="range" id="wrWealth" min="1" max="10" value="5" oninput="updateLRDisplay('wrWealth','wrWealthVal')" class="life-slider">
+        <span class="lrr-val" id="wrWealthVal">5</span>
+      </div>
+      <div class="life-rating-row">
+        <div class="lrr-label">💜 Relationships</div>
+        <input type="range" id="wrRelationships" min="1" max="10" value="5" oninput="updateLRDisplay('wrRelationships','wrRelationshipsVal')" class="life-slider">
+        <span class="lrr-val" id="wrRelationshipsVal">5</span>
+      </div>
+      <div class="life-rating-row">
+        <div class="lrr-label">✨ Fun</div>
+        <input type="range" id="wrFun" min="1" max="10" value="5" oninput="updateLRDisplay('wrFun','wrFunVal')" class="life-slider">
+        <span class="lrr-val" id="wrFunVal">5</span>
+      </div>
+    </div>
+  </div>
+
+  <button onclick="saveWeekReview()" class="btn-p" style="width:100%;border-radius:14px;padding:14px;font-size:.82em;letter-spacing:1.2px;margin-bottom:32px">✦ Save This Week's Review</button>
+
+  <!-- PAST REVIEWS -->
+  <div class="sh">📚 Past Reviews</div>
+  <div id="wrHistory"></div>
 </div>
 
 <!-- ══════════════════ IDEA VAULT ══════════════════ -->
 <div id="ideas" class="panel">
   <div class="sh">✨ Idea Vault</div>
-  <div class="info-box">Capture every spark before it disappears. Organize by category, track status, never lose an idea again.</div>
+  <div class="info-box">Capture every spark before it disappears. One idea can belong to multiple categories. Organize by category, track status, never lose an idea again.</div>
 
   <div class="idea-layout">
     <!-- Sidebar -->
@@ -1399,11 +1726,24 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
           <label class="idea-form-label">Category</label>
           <select class="idea-form-select" id="ideaCat">
             <option value="ads">📣 Ad Concepts</option>
-            <option value="commoffer">🎁 Community Offer</option>
+            <option value="commoffer">🌟 Community Offerings</option>
+            <option value="compost">💬 Community Post Ideas</option>
             <option value="youtube">▶️ YouTube Ideas</option>
-            <option value="automations">⚙️ Automations</option>
+            <option value="freebie">🎁 Freebie / Lead Magnet</option>
             <option value="content">✍️ Content Ideas</option>
+            <option value="other">🗂️ Other</option>
           </select>
+        </div>
+        <div class="idea-form-row">
+          <label class="idea-form-label">Also tagged as (optional)</label>
+          <div id="ideaTagsWrap" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px">
+            <label style="display:flex;align-items:center;gap:4px;font-size:.72em;color:var(--muted);font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer"><input type="checkbox" value="ads" class="idea-tag-cb"> 📣 Ad</label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:.72em;color:var(--muted);font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer"><input type="checkbox" value="commoffer" class="idea-tag-cb"> 🌟 Offering</label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:.72em;color:var(--muted);font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer"><input type="checkbox" value="compost" class="idea-tag-cb"> 💬 Post</label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:.72em;color:var(--muted);font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer"><input type="checkbox" value="youtube" class="idea-tag-cb"> ▶️ YT</label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:.72em;color:var(--muted);font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer"><input type="checkbox" value="freebie" class="idea-tag-cb"> 🎁 Freebie</label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:.72em;color:var(--muted);font-family:Montserrat,sans-serif;font-weight:700;cursor:pointer"><input type="checkbox" value="content" class="idea-tag-cb"> ✍️ Content</label>
+          </div>
         </div>
         <div class="idea-form-row">
           <label class="idea-form-label">Notes (optional)</label>
@@ -1426,6 +1766,47 @@ button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(127,119,221,0
       </div>
       <div class="idea-list" id="ideaList"></div>
     </div>
+  </div>
+</div>
+
+<!-- ══════════════════ STORY BANK ══════════════════ -->
+<div id="storybank" class="panel">
+  <div class="sh">📖 Story Bank</div>
+  <div class="info-box">50 stories you could tell — across YouTube, content, ads, and community posts. Filter by pillar, mark ones you've used, delete what doesn't resonate, and send a story straight to your YouTube Ideas or Idea Vault.</div>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="sbPillarBtns"></div>
+
+  <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+    <input type="text" id="sbSearch" placeholder="Search stories..." style="flex:1;min-width:180px;border-radius:10px" oninput="renderStoryBank()">
+    <select id="sbStatusFilter" onchange="renderStoryBank()" style="border-radius:10px">
+      <option value="all">All</option>
+      <option value="unused">Unused</option>
+      <option value="done">✅ Used</option>
+    </select>
+  </div>
+
+  <div id="storyBankList"></div>
+
+  <!-- Add Custom Story -->
+  <div class="card lavender" style="margin-top:24px">
+    <div class="card-title">✦ Add Your Own Story</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div class="field"><label class="fl">Story title</label><input type="text" id="sbNewTitle" placeholder="e.g. The time I fired a client..."></div>
+      <div class="field"><label class="fl">Pillar</label>
+        <select id="sbNewPillar" style="width:100%">
+          <option value="Soul & Strategy">Soul & Strategy</option>
+          <option value="Human Design">Human Design</option>
+          <option value="Kabbalah">Kabbalah</option>
+          <option value="AI">AI for Business</option>
+          <option value="Skool">Skool Community</option>
+          <option value="Personal">Personal Transformation</option>
+          <option value="Croatia">Croatia Lifestyle</option>
+          <option value="Client Challenge">Client Challenge</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label class="fl">Notes / angle</label><input type="text" id="sbNewNotes" placeholder="The hook, the lesson, the CTA..."></div>
+    <button class="btn-p btn-sm" onclick="addCustomStory()">+ Add Story</button>
   </div>
 </div>
 
@@ -1631,6 +2012,9 @@ function go(id, btn){
   if(id==='morning') loadM();
   if(id==='evening') loadE();
   if(id==='checkin') loadCI();
+  if(id==='rhythm') renderWeekGrid();
+  if(id==='weekreview'){ loadWeekReview(); renderWRHistory(); }
+  if(id==='storybank'){ renderStoryBank(); }
 }
 
 // ══════════════════════════════════════════════
@@ -1729,6 +2113,15 @@ function updateMomentumBar(){
     '<div class="prog-row"><span class="prog-label">✍️ Content</span><div class="prog-bar"><div class="prog-fill" style="width:'+contentPct+'%;background:linear-gradient(90deg,#4FBFB0,var(--p400))"></div></div><span class="prog-val">'+totalContent+'</span></div>'+
     (snapMembers>0?'<div class="prog-row"><span class="prog-label">🌱 Member Growth</span><div class="prog-bar"><div class="prog-fill" style="width:'+memberPct+'%;background:linear-gradient(90deg,var(--p400),#7DD4C8)"></div></div><span class="prog-val">+'+memberGrowth+'</span></div>':'')+
     '<div class="prog-row"><span class="prog-label">💰 MRR Growth</span><div class="prog-bar"><div class="prog-fill mrr-bar-fill" style="width:'+mrrPct+'%"></div></div><span class="prog-val mrr-val-highlight">'+mrrGrowthLabel+'</span></div>';
+}
+
+function toggleLetter(){
+  var panel=ge('letterPanel'); var btn=ge('letterToggleBtn'); var arrow=ge('letterToggleArrow');
+  if(!panel)return;
+  var open=panel.style.display==='none'||panel.style.display==='';
+  panel.style.display=open?'block':'none';
+  if(arrow) arrow.textContent=open?'▴':'▾';
+  if(btn) btn.style.background=open?'linear-gradient(135deg,rgba(123,111,212,0.35),rgba(79,191,176,0.25))':'linear-gradient(135deg,rgba(123,111,212,0.2),rgba(79,191,176,0.15))';
 }
 
 // ══════════════════════════════════════════════
@@ -2404,13 +2797,16 @@ function escRHtml(s){
 // IDEA VAULT
 // ══════════════════════════════════════════════
 var IDEA_CATS={
-  ads:        {label:'Ad Concepts',     icon:'📣'},
-  commoffer:  {label:'Community Offer', icon:'🎁'},
-  youtube:    {label:'YouTube Ideas',   icon:'▶️'},
-  automations:{label:'Automations',     icon:'⚙️'},
-  content:    {label:'Content Ideas',   icon:'✍️'},
-  offers:     {label:'Community Offer', icon:'🎁'},
-  community:  {label:'Community Offer', icon:'🎁'}
+  ads:        {label:'Ad Concepts',          icon:'📣'},
+  commoffer:  {label:'Community Offerings',  icon:'🌟'},
+  compost:    {label:'Community Post Ideas', icon:'💬'},
+  youtube:    {label:'YouTube Ideas',        icon:'▶️'},
+  freebie:    {label:'Freebie / Lead Magnet',icon:'🎁'},
+  content:    {label:'Content Ideas',        icon:'✍️'},
+  other:      {label:'Other',                icon:'🗂️'},
+  // legacy aliases
+  offers:     {label:'Community Offerings',  icon:'🌟'},
+  community:  {label:'Community Offerings',  icon:'🌟'}
 };
 function loadIdeas(){ try{return JSON.parse(localStorage.getItem('fos_ideas')||'[]');}catch(e){return[];} }
 function saveIdeas(data){ localStorage.setItem('fos_ideas',JSON.stringify(data)); }
@@ -2420,14 +2816,28 @@ var ideas=loadIdeas(), activeCat='all', activeStatus='all';
 
 function renderIdeaCatBtns(){
   var c=ge('ideaCatBtns'); if(!c)return;
-  var ACTIVE_CATS=['ads','commoffer','youtube','automations','content'];
-  var btns=[{key:'all',label:'All Ideas',icon:'✨',count:ideas.length}];
+  var ACTIVE_CATS=['ads','commoffer','compost','youtube','freebie','content','other'];
+
+  var eveningContentCount = 0;
+  Object.keys(DB.days).forEach(function(ds){
+    var e=DB.days[ds].evening;
+    if(e&&e.contentIdeas&&e.contentIdeas.trim()){
+      var label=fmtShort(ds)+' — Content Ideas';
+      var exists=ideas.some(function(i){ return i.source==='evening' && i.title===label; });
+      if(!exists) eveningContentCount++;
+    }
+  });
+
+  var totalAll = ideas.length + eveningContentCount;
+  var btns=[{key:'all',label:'All Ideas',icon:'✨',count:totalAll}];
   ACTIVE_CATS.forEach(function(key){
     var cat=IDEA_CATS[key];
-    btns.push({key:key,label:cat.label,icon:cat.icon,count:ideas.filter(function(i){
-      if(key==='commoffer') return i.cat==='commoffer'||i.cat==='offers'||i.cat==='community';
-      return i.cat===key;
-    }).length});
+    var base=ideas.filter(function(i){
+      if(key==='commoffer') return i.cat==='commoffer'||i.cat==='offers'||i.cat==='community'||(i.tags&&(i.tags.indexOf('commoffer')>=0));
+      return i.cat===key||(i.tags&&i.tags.indexOf(key)>=0);
+    }).length;
+    var extra = key==='content' ? eveningContentCount : 0;
+    btns.push({key:key,label:cat.label,icon:cat.icon,count:base+extra});
   });
   c.innerHTML=btns.map(function(b){
     return '<button class="idea-cat-btn '+(activeCat===b.key?'active':'')+'" onclick="setActiveCat(\''+b.key+'\')">'+
@@ -2451,11 +2861,37 @@ function setIdeaStatus(btn,status){
 function renderIdeaList(){
   var list=ge('ideaList'); if(!list)return;
   var title=ge('ideaMainTitle');
-  var filtered=ideas.slice();
+
+  // For content category, merge DB.days evening contentIdeas with stored ideas
+  var allIdeas = ideas.slice();
+  if(activeCat==='content' || activeCat==='all'){
+    var dates=Object.keys(DB.days).sort().reverse();
+    dates.forEach(function(ds){
+      var e=DB.days[ds].evening;
+      if(e&&e.contentIdeas&&e.contentIdeas.trim()){
+        var label=fmtShort(ds)+' — Content Ideas';
+        // Only add if not already in the list (avoid duplicates from evening save)
+        var exists=allIdeas.some(function(i){ return i.source==='evening' && i.title===label; });
+        if(!exists){
+          allIdeas.push({
+            id: 'ev-'+ds,
+            title: label,
+            cat: 'content',
+            notes: e.contentIdeas,
+            status: 'new',
+            source: 'evening',
+            ts: new Date(ds+'T23:00:00').getTime()
+          });
+        }
+      }
+    });
+  }
+
+  var filtered=allIdeas.slice();
   if(activeCat!=='all'){
     filtered=filtered.filter(function(i){
-      if(activeCat==='commoffer') return i.cat==='commoffer'||i.cat==='offers'||i.cat==='community';
-      return i.cat===activeCat;
+      if(activeCat==='commoffer') return i.cat==='commoffer'||i.cat==='offers'||i.cat==='community'||(i.tags&&i.tags.indexOf('commoffer')>=0);
+      return i.cat===activeCat||(i.tags&&i.tags.indexOf(activeCat)>=0);
     });
   }
   if(activeStatus!=='all') filtered=filtered.filter(function(i){return i.status===activeStatus;});
@@ -2470,6 +2906,7 @@ function renderIdeaList(){
     var cat=IDEA_CATS[idea.cat]||{label:idea.cat,icon:''};
     var d=new Date(idea.ts).toLocaleDateString('en-US',{month:'short',day:'numeric'});
     var sourceTag = idea.source==='evening' ? '<span style="font-family:Montserrat,sans-serif;font-size:.58em;font-weight:800;padding:2px 8px;border-radius:8px;background:rgba(123,111,212,0.12);color:var(--p400);text-transform:uppercase;letter-spacing:.5px">🌙 From Evening</span>' : '';
+    var extraTags = (idea.tags&&idea.tags.length) ? idea.tags.filter(function(t){return t!==idea.cat;}).map(function(t){var tc=IDEA_CATS[t]||{icon:'',label:t};return '<span style="font-family:Montserrat,sans-serif;font-size:.58em;font-weight:800;padding:2px 8px;border-radius:8px;background:rgba(79,191,176,0.12);color:#4FBFB0;text-transform:uppercase;letter-spacing:.5px">'+tc.icon+' '+tc.label+'</span>';}).join('') : '';
     return '<div class="idea-card">'+
       '<div class="idea-card-header">'+
         '<div class="idea-card-title">'+escRHtml(idea.title)+'</div>'+
@@ -2478,6 +2915,7 @@ function renderIdeaList(){
       (idea.notes?'<div class="idea-card-notes">'+escRHtml(idea.notes)+'</div>':'')+
       '<div class="idea-card-footer">'+
         '<span class="idea-badge '+idea.cat+'">'+cat.icon+' '+cat.label+'</span>'+
+        extraTags+
         sourceTag+
         '<select class="idea-status-sel" onchange="updateIdeaSt(\''+idea.id+'\',this.value)">'+
           '<option value="new" '+(idea.status==='new'?'selected':'')+'>💡 New</option>'+
@@ -2495,9 +2933,12 @@ function submitIdea(){
   var notes=document.querySelector('.idea-form-textarea#ideaNotes');
   var cat=document.querySelector('.idea-form-select#ideaCat');
   if(!title||!title.value.trim()){alert('Give this idea a title first!');return;}
-  ideas.unshift({id:iuid(),title:title.value.trim(),cat:cat.value,notes:notes.value.trim(),status:'new',ts:Date.now()});
+  var tags=[];
+  document.querySelectorAll('.idea-tag-cb:checked').forEach(function(cb){if(cb.value!==cat.value)tags.push(cb.value);});
+  ideas.unshift({id:iuid(),title:title.value.trim(),cat:cat.value,tags:tags,notes:notes.value.trim(),status:'new',ts:Date.now()});
   saveIdeas(ideas);
   title.value=''; notes.value='';
+  document.querySelectorAll('.idea-tag-cb').forEach(function(cb){cb.checked=false;});
   renderIdeaCatBtns(); renderIdeaList();
 }
 function deleteIdea(id){
@@ -2728,6 +3169,395 @@ function updateAll(){
 }
 updateAll();
 checkOnboard();
+
+// ══════════════════════════════════════════════
+// BACKLOG POOL
+// ══════════════════════════════════════════════
+function loadBacklog(){ try{return JSON.parse(localStorage.getItem('fos_backlog')||'[]');}catch(e){return[];} }
+function saveBacklog(d){ localStorage.setItem('fos_backlog',JSON.stringify(d)); }
+var backlogItems = loadBacklog();
+
+function renderBacklogPool(){
+  var el=ge('backlogPool'); if(!el)return;
+  if(!backlogItems.length){
+    el.innerHTML='<span style="color:var(--muted);font-size:.8em;font-style:italic;font-weight:300">No unscheduled tasks yet. Add tasks below — they\'ll sit here until you assign them to a day.</span>';
+    return;
+  }
+  el.innerHTML=backlogItems.map(function(item){
+    return '<div class="backlog-chip" id="bc_'+item.id+'" onclick="assignBacklogTask(\''+item.id+'\')">'+
+      escRHtml(item.text)+
+      '<button onclick="event.stopPropagation();removeBacklogItem(\''+item.id+'\')" style="background:none;border:none;color:rgba(200,192,255,0.6);padding:0 0 0 6px;font-size:.85em;cursor:pointer;min-width:auto">✕</button>'+
+    '</div>';
+  }).join('');
+}
+
+function addBacklogTask(){
+  var inp=ge('backlogInput');
+  if(!inp||!inp.value.trim())return;
+  backlogItems.push({id:ruid(),text:inp.value.trim()});
+  saveBacklog(backlogItems);
+  inp.value='';
+  renderBacklogPool();
+}
+
+function removeBacklogItem(id){
+  backlogItems=backlogItems.filter(function(i){return i.id!==id;});
+  saveBacklog(backlogItems);
+  renderBacklogPool();
+}
+
+function assignBacklogTask(id){
+  var item=backlogItems.find(function(i){return i.id===id;}); if(!item)return;
+  var day=prompt('Assign "'+item.text+'" to which day?\n\nType: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, or Sunday');
+  if(!day)return;
+  day=day.trim();
+  var match=DAYS_R.find(function(d){return d.toLowerCase()===day.toLowerCase()});
+  if(!match){alert('Day not recognised. Use the full name e.g. Monday');return;}
+  if(!rTasks[match]) rTasks[match]=[];
+  rTasks[match].push({id:ruid(),text:item.text});
+  saveRTasks(rTasks);
+  backlogItems=backlogItems.filter(function(i){return i.id!==id;});
+  saveBacklog(backlogItems);
+  renderBacklogPool();
+  renderWeekGrid();
+}
+
+(function(){ renderBacklogPool(); })();
+
+// ══════════════════════════════════════════════
+// WEEKLY REVIEW
+// ══════════════════════════════════════════════
+function loadWRs(){ try{return JSON.parse(localStorage.getItem('fos_weekreviews')||'[]');}catch(e){return[];} }
+function saveWRs(d){ localStorage.setItem('fos_weekreviews',JSON.stringify(d)); }
+var weekReviews = loadWRs();
+var wrEnergyVal = 0;
+
+function setWREnergy(v){
+  wrEnergyVal=v;
+  document.querySelectorAll('#wrEnergyBtns .e-btn').forEach(function(b){ b.classList.toggle('sel',parseInt(b.dataset.v)===v); });
+}
+
+function loadWeekReview(){
+  // Default date to last Sunday
+  var d=ge('wrDate');
+  if(d&&!d.value){
+    var now=new Date();
+    var day=now.getDay(); // 0=Sun
+    var diff=day===0?0:7-day; // days until next Sunday... actually last sunday
+    var lastSun=new Date(now); lastSun.setDate(now.getDate()-(day===0?0:day));
+    d.value=lastSun.toISOString().split('T')[0];
+  }
+}
+
+function autoSaveWR(){ /* intentional — user saves manually or on button click */ }
+
+function updateLRDisplay(sliderId, valId){
+  var s=ge(sliderId); var v=ge(valId);
+  if(s&&v) v.textContent=s.value;
+}
+
+function saveWeekReview(){
+  var dateVal=gv('wrDate')||TODAY;
+  var entry={
+    id: dateVal,
+    date: dateVal,
+    members: gv('wrMembers'),
+    mrr: gv('wrMRR'),
+    content: gv('wrContent'),
+    newMembers: gv('wrNewMembers'),
+    adSpend: gv('wrAdSpend'),
+    yt: gv('wrYT'),
+    wins: gv('wrWins'),
+    didntWork: gv('wrDidntWork'),
+    lessons: gv('wrLessons'),
+    p1: gv('wrP1'), p2: gv('wrP2'), p3: gv('wrP3'),
+    energy: wrEnergyVal,
+    health: ge('wrHealth')?ge('wrHealth').value:'5',
+    wealth: ge('wrWealth')?ge('wrWealth').value:'5',
+    relationships: ge('wrRelationships')?ge('wrRelationships').value:'5',
+    fun: ge('wrFun')?ge('wrFun').value:'5',
+    ts: Date.now()
+  };
+  var idx=weekReviews.findIndex(function(r){return r.date===dateVal;});
+  if(idx>=0){weekReviews[idx]=entry;}else{weekReviews.unshift(entry);}
+  saveWRs(weekReviews);
+  renderWRHistory();
+  var pill=ge('savePill'); if(pill){pill.classList.add('show');setTimeout(function(){pill.classList.remove('show');},2000);}
+  // Clear form for next use
+  ['wrWins','wrDidntWork','wrLessons','wrP1','wrP2','wrP3','wrMembers','wrMRR','wrContent','wrNewMembers','wrAdSpend','wrYT'].forEach(function(id){sv(id,'');});
+  wrEnergyVal=0;
+  document.querySelectorAll('#wrEnergyBtns .e-btn').forEach(function(b){b.classList.remove('sel');});
+  ['wrHealth','wrWealth','wrRelationships','wrFun'].forEach(function(id){
+    var el=ge(id); if(el){el.value=5; updateLRDisplay(id,id+'Val');}
+  });
+  ge('wrDate').value='';
+  loadWeekReview();
+}
+
+function renderWRHistory(){
+  var el=ge('wrHistory'); if(!el)return;
+  var sorted=weekReviews.slice().sort(function(a,b){return b.date.localeCompare(a.date);});
+  if(!sorted.length){
+    el.innerHTML='<div style="color:var(--muted);font-size:.88em;padding:16px 0;font-weight:300">No reviews saved yet. Complete your first Weekly Review above. ✨</div>';
+    return;
+  }
+  el.innerHTML=sorted.map(function(r){
+    var label=new Date(r.date+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+    return '<div class="card" style="margin-bottom:14px">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">'+
+        '<div style="font-family:Montserrat,sans-serif;font-size:.88em;font-weight:800;color:#f0ecff;text-transform:uppercase;letter-spacing:.8px">Week ending '+label+'</div>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+          (r.members?'<span style="font-size:.72em;font-family:Montserrat,sans-serif;font-weight:800;color:#4FBFB0">👥 '+r.members+' members</span>':'')+ 
+          (r.mrr?'<span style="font-size:.72em;font-family:Montserrat,sans-serif;font-weight:800;color:var(--gold)">💰 $'+r.mrr+' MRR</span>':'')+ 
+          (r.energy?'<span style="font-size:.72em;font-family:Montserrat,sans-serif;font-weight:800;color:var(--p200)">⚡ Energy '+r.energy+'/10</span>':'')+ 
+        '</div>'+
+        '<button onclick="deleteWR(\''+r.id+'\')" style="background:none;border:none;color:rgba(200,192,255,0.4);font-size:.8em;cursor:pointer;padding:0;min-width:auto">🗑</button>'+
+      '</div>'+
+      (r.wins?'<div style="margin-bottom:8px"><div style="font-size:.65em;font-weight:700;font-family:Montserrat,sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">⭐ Wins</div><div style="font-size:.85em;color:#f0ecff;font-weight:300;white-space:pre-wrap;line-height:1.6">'+escRHtml(r.wins)+'</div></div>':'')+
+      (r.didntWork?'<div style="margin-bottom:8px"><div style="font-size:.65em;font-weight:700;font-family:Montserrat,sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">🪞 Didn\'t Work</div><div style="font-size:.85em;color:#f0ecff;font-weight:300;white-space:pre-wrap;line-height:1.6">'+escRHtml(r.didntWork)+'</div></div>':'')+
+      (r.lessons?'<div style="margin-bottom:8px"><div style="font-size:.65em;font-weight:700;font-family:Montserrat,sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">💡 Lessons</div><div style="font-size:.85em;color:#f0ecff;font-weight:300;white-space:pre-wrap;line-height:1.6">'+escRHtml(r.lessons)+'</div></div>':'')+
+      ((r.p1||r.p2||r.p3)?'<div style="margin-bottom:8px"><div style="font-size:.65em;font-weight:700;font-family:Montserrat,sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">🚀 Next Week\'s Focus</div>'+
+        [r.p1,r.p2,r.p3].filter(Boolean).map(function(p,i){return '<div style="font-size:.85em;color:#f0ecff;font-weight:300;padding:2px 0">'+['1️⃣','2️⃣','3️⃣'][i]+' '+escRHtml(p)+'</div>';}).join('')+'</div>':'')+
+      ((r.health||r.wealth||r.relationships||r.fun)?
+        '<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--bdr)">'+
+        '<div style="font-size:.65em;font-weight:700;font-family:Montserrat,sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">🌟 Life Ratings</div>'+
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">'+
+        [
+          {icon:'💚',label:'Health',key:'health'},
+          {icon:'💰',label:'Wealth',key:'wealth'},
+          {icon:'💜',label:'Relationships',key:'relationships'},
+          {icon:'✨',label:'Fun',key:'fun'}
+        ].map(function(f){
+          var val=parseInt(r[f.key])||0;
+          var pct=val*10;
+          return '<div style="text-align:center">'+
+            '<div style="font-size:.65em;font-family:Montserrat,sans-serif;font-weight:700;color:var(--muted);margin-bottom:4px">'+f.icon+'<br>'+f.label+'</div>'+
+            '<div style="background:rgba(160,148,240,0.15);border-radius:4px;height:40px;display:flex;align-items:flex-end;overflow:hidden;margin-bottom:3px">'+
+              '<div style="width:100%;height:'+pct+'%;background:linear-gradient(180deg,var(--p400),#4FBFB0);border-radius:3px;transition:height .5s"></div>'+
+            '</div>'+
+            '<div style="font-family:Montserrat,sans-serif;font-size:.78em;font-weight:900;color:#f0ecff">'+val+'</div>'+
+          '</div>';
+        }).join('')+
+        '</div></div>'
+      :'')+
+    '</div>';
+  }).join('');
+}
+
+function deleteWR(id){
+  if(!confirm('Delete this weekly review?'))return;
+  weekReviews=weekReviews.filter(function(r){return r.id!==id;});
+  saveWRs(weekReviews); renderWRHistory();
+}
+
+// ══════════════════════════════════════════════
+// STORY BANK
+// ══════════════════════════════════════════════
+var SB_PILLARS = ['All','Soul & Strategy','Human Design','Kabbalah','AI','Skool','Personal','Croatia','Client Challenge'];
+var SB_PILLAR_ICONS = {'All':'✨','Soul & Strategy':'💎','Human Design':'🧬','Kabbalah':'🔯','AI':'🤖','Skool':'🏫','Personal':'🌙','Croatia':'🌊','Client Challenge':'🎯'};
+
+var STORY_LIBRARY_DEFAULT = [
+  // SOUL & STRATEGY
+  {id:'s001',title:'Why Poverty is Always Spiritual (And How I Broke Free)',pillar:'Soul & Strategy',notes:'Hook: what no one tells you about why you\'re broke'},
+  {id:'s002',title:'Wealth is 99% Spiritual: My Journey from Broke to Abundant',pillar:'Soul & Strategy',notes:'Personal transformation arc'},
+  {id:'s003',title:'The Kabbalistic Truth About Money No One Tells You',pillar:'Soul & Strategy',notes:''},
+  {id:'s004',title:'Bread of Shame: Why Free Coaching Keeps Your Clients Broke',pillar:'Soul & Strategy',notes:'Energetic exchange principle'},
+  {id:'s005',title:'I Bartered My $10K Offer & Watched My Client\'s Business Collapse',pillar:'Soul & Strategy',notes:'Lesson: proper value exchange'},
+  {id:'s006',title:'99% Spiritual, 1% Physical: The Real Wealth Formula',pillar:'Soul & Strategy',notes:''},
+  {id:'s007',title:'Why I Stopped Accepting Payment Plans (The Lesson Cost Me $2K)',pillar:'Soul & Strategy',notes:''},
+  {id:'s008',title:'The Miracle Formula: 4 Quadrants That Quantum Leap Your Income',pillar:'Soul & Strategy',notes:''},
+  {id:'s009',title:'Certainty Beyond Logic: How I Manifested $20K Months',pillar:'Soul & Strategy',notes:''},
+  {id:'s010',title:'Your Clients Aren\'t Paying You — They\'re Just Vessels',pillar:'Soul & Strategy',notes:'Kabbalistic receiving concept'},
+  {id:'s011',title:'The Spiritual Reason Your Business Isn\'t Making Money',pillar:'Soul & Strategy',notes:''},
+  // HUMAN DESIGN
+  {id:'h001',title:'I\'m a Projector Building a Business Working 20 Hours a Week — Here\'s My System',pillar:'Human Design',notes:'Core Projector lifestyle content'},
+  {id:'h002',title:'Stop Using Your Human Design as an Excuse to Be Lazy',pillar:'Human Design',notes:'Spicy take — energetic authenticity'},
+  {id:'h003',title:'Why Projectors Are the New Earth Leaders (Not Weak Beings)',pillar:'Human Design',notes:''},
+  {id:'h004',title:'How I Built My Business on a Venus Line (Astrocartography Changed Everything)',pillar:'Human Design',notes:''},
+  {id:'h005',title:'The Pluto Line That Almost Destroyed My Business',pillar:'Human Design',notes:'Croatia / astrocartography story'},
+  {id:'h006',title:'Human Design Types: Your Built-In Marketing Strategy',pillar:'Human Design',notes:''},
+  {id:'h007',title:'Why I Quit Copying Generators & Finally Scaled My Business',pillar:'Human Design',notes:''},
+  {id:'h008',title:'Your Profile Line is Your Funnel (Here\'s Mine)',pillar:'Human Design',notes:'4/6 profile angle'},
+  {id:'h009',title:'How to Use Human Design to Create Content That Converts',pillar:'Human Design',notes:''},
+  {id:'h010',title:'The Self-Projected Authority That Led Me to Croatia',pillar:'Human Design',notes:''},
+  // KABBALAH
+  {id:'k001',title:'The Tree of Life is Your Business Model (Here\'s How)',pillar:'Kabbalah',notes:''},
+  {id:'k002',title:'Tikun: The Spiritual Baggage You Came Here to Transform',pillar:'Kabbalah',notes:''},
+  {id:'k003',title:'North Node in Aquarius: Why I Build AI Tools for the Collective',pillar:'Kabbalah',notes:''},
+  {id:'k004',title:'The Opponent Isn\'t Your Enemy — It\'s Your Greatest Teacher',pillar:'Kabbalah',notes:''},
+  {id:'k005',title:'Why Satan is Actually a Positive Force in Your Business',pillar:'Kabbalah',notes:'Spicy hook'},
+  {id:'k006',title:'The 95-Yard Line: Why Most Entrepreneurs Quit Before the Miracle',pillar:'Kabbalah',notes:''},
+  {id:'k007',title:'Malhut: How to Correct Your Energy Flow for Manifestation',pillar:'Kabbalah',notes:''},
+  {id:'k008',title:'Proactive vs Reactive: The Kabbalistic Key to Quantum Leaps',pillar:'Kabbalah',notes:''},
+  {id:'k009',title:'The Darker the Night, The Brighter the Dawn (My Addiction Story)',pillar:'Kabbalah',notes:'Personal transformation + Kabbalah'},
+  {id:'k010',title:'How Kabbalistic Astrology Told Me Exactly What to Build',pillar:'Kabbalah',notes:''},
+  // AI
+  {id:'a001',title:'I Created a CEO Oracle GPT That Decodes Your Soul\'s Business Plan',pillar:'AI',notes:''},
+  {id:'a002',title:'How I Use Google NotebookLM to Build My Entire Content Strategy',pillar:'AI',notes:''},
+  {id:'a003',title:'AI as Your Higher Self: The Spiritual Case for Technology',pillar:'AI',notes:'Brand-defining piece'},
+  {id:'a004',title:'The AI DM Assistant That Closed My Next 5 Clients',pillar:'AI',notes:''},
+  {id:'a005',title:'How to Use Claude Artifacts to Create Branded Workbooks in Minutes',pillar:'AI',notes:'Tutorial angle'},
+  {id:'a006',title:'My 100K Business by Design AI (Human Design + Strategy)',pillar:'AI',notes:''},
+  {id:'a007',title:'Why AI is Wiping Out the Middle Class of Online Business',pillar:'AI',notes:'Spicy trend angle'},
+  {id:'a008',title:'How I Repurpose 1 YouTube Video into 10 Pieces of Content with AI',pillar:'AI',notes:'Binge Bank Method angle'},
+  // SKOOL
+  {id:'sk01',title:'Why I Chose Skool Over Facebook Groups (And Never Looked Back)',pillar:'Skool',notes:''},
+  {id:'sk02',title:'The Freemium Model That Made Me My First $1000',pillar:'Skool',notes:''},
+  {id:'sk03',title:'Why I Chose Freemium Over Paid-Only (And What Happened)',pillar:'Skool',notes:''},
+  {id:'sk04',title:'Frequency Field vs Funnel: Why I Stopped Pushing',pillar:'Skool',notes:''},
+  {id:'sk05',title:'The $7 Gratitude Container That Changed My Business',pillar:'Skool',notes:''},
+  {id:'sk06',title:'How to Build a Skool Community That Actually Engages',pillar:'Skool',notes:''},
+  {id:'sk07',title:'The Light Container: Start Your Skool Community with Just These 3 Things',pillar:'Skool',notes:''},
+  {id:'sk08',title:'The One-on-One Client Challenge That Converts at 80%',pillar:'Skool',notes:''},
+  {id:'sk09',title:'Why Your Skool Community is Quiet (And How to Fix It)',pillar:'Skool',notes:''},
+  // PERSONAL
+  {id:'p001',title:'How I Got Clean from Heroin Without AA (My Spiritual Path)',pillar:'Personal',notes:'Most powerful personal story'},
+  {id:'p002',title:'I Didn\'t Date for 7 Years — Then I Met My Soulmate on My Venus Line',pillar:'Personal',notes:''},
+  {id:'p003',title:'Moving to Croatia with $0 Proof My Business Would Work',pillar:'Personal',notes:'Croatia origin story'},
+  {id:'p004',title:'The Coach Who Almost Killed My Business (And What I Learned)',pillar:'Personal',notes:''},
+  // CROATIA
+  {id:'c001',title:'How Living in Croatia Changed My Business',pillar:'Croatia',notes:'Lifestyle magnet video'},
+  {id:'c002',title:'Why I Moved to Croatia as a Projector',pillar:'Croatia',notes:''},
+  {id:'c003',title:'Moving to Croatia with $0 Proof My Business Would Work',pillar:'Croatia',notes:'Also in Personal'},
+  // CLIENT CHALLENGE
+  {id:'cc01',title:'Inside My $7 Premium Community: What You Actually Get',pillar:'Client Challenge',notes:''},
+  {id:'cc02',title:'The 5-Day Client Challenge That Closes High-Ticket Clients (Without Being Salesy)',pillar:'Client Challenge',notes:''},
+  {id:'cc03',title:'Why I Stopped Doing Discovery Calls & Started Doing Client Challenges Instead',pillar:'Client Challenge',notes:''},
+  {id:'cc04',title:'The 6 Custom AI Tools I Built for My Clients (And How You Can Use Them)',pillar:'Client Challenge',notes:''}
+];
+
+function loadSBStatuses(){ try{return JSON.parse(localStorage.getItem('fos_sb_statuses')||'{}');}catch(e){return{};} }
+function saveSBStatuses(d){ localStorage.setItem('fos_sb_statuses',JSON.stringify(d)); }
+function loadCustomStories(){ try{return JSON.parse(localStorage.getItem('fos_sb_custom')||'[]');}catch(e){return[];} }
+function saveCustomStories(d){ localStorage.setItem('fos_sb_custom',JSON.stringify(d)); }
+
+var sbStatuses = loadSBStatuses();
+var sbCustom = loadCustomStories();
+var sbActivePillar = 'All';
+
+function renderSBPillarBtns(){
+  var el=ge('sbPillarBtns'); if(!el)return;
+  el.innerHTML=SB_PILLARS.map(function(p){
+    return '<button class="pill '+(sbActivePillar===p?'sel':'')+'" onclick="setSBPillar(\''+p+'\')">'+
+      (SB_PILLAR_ICONS[p]||'')+'&nbsp;'+p+
+    '</button>';
+  }).join('');
+}
+
+function setSBPillar(p){ sbActivePillar=p; renderSBPillarBtns(); renderStoryBank(); }
+
+function loadDeletedStories(){ try{return JSON.parse(localStorage.getItem('fos_sb_deleted')||'[]');}catch(e){return[];} }
+function saveDeletedStories(d){ localStorage.setItem('fos_sb_deleted',JSON.stringify(d)); }
+var sbDeleted = loadDeletedStories();
+
+function deleteStory(id){
+  // Works for both pre-loaded and custom
+  sbDeleted.push(id);
+  saveDeletedStories(sbDeleted);
+  // Also remove from custom if it's there
+  sbCustom=sbCustom.filter(function(s){return s.id!==id;});
+  saveCustomStories(sbCustom);
+  renderStoryBank();
+}
+
+function renderStoryBank(){
+  renderSBPillarBtns();
+  var el=ge('storyBankList'); if(!el)return;
+  var search=(ge('sbSearch')?ge('sbSearch').value.toLowerCase():'');
+  var statusFilter=(ge('sbStatusFilter')?ge('sbStatusFilter').value:'all');
+  var allStories = STORY_LIBRARY_DEFAULT.concat(sbCustom);
+
+  var filtered=allStories.filter(function(s){
+    if(sbDeleted.indexOf(s.id)>=0) return false; // hide deleted
+    var st=sbStatuses[s.id]||'unused';
+    if(sbActivePillar!=='All'&&s.pillar!==sbActivePillar)return false;
+    if(statusFilter!=='all'&&st!==statusFilter)return false;
+    if(search&&s.title.toLowerCase().indexOf(search)<0&&(!s.notes||s.notes.toLowerCase().indexOf(search)<0))return false;
+    return true;
+  });
+
+  if(!filtered.length){
+    el.innerHTML='<div style="color:var(--muted);font-size:.9em;padding:24px;text-align:center;font-style:italic;font-weight:300">No stories here — try a different filter, or all your stories in this pillar have been deleted.</div>';
+    return;
+  }
+
+  var byPillar={};
+  filtered.forEach(function(s){
+    if(!byPillar[s.pillar])byPillar[s.pillar]=[];
+    byPillar[s.pillar].push(s);
+  });
+
+  var html='';
+  Object.keys(byPillar).forEach(function(pillar){
+    html+='<div style="font-family:Montserrat,sans-serif;font-size:.68em;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--p200);margin:24px 0 10px;display:flex;align-items:center;gap:8px">'+(SB_PILLAR_ICONS[pillar]||'')+' '+pillar+'<div style="flex:1;height:1px;background:rgba(160,148,240,0.2)"></div></div>';
+    byPillar[pillar].forEach(function(s){
+      var st=sbStatuses[s.id]||'unused';
+      var borderColor=st==='done'?'rgba(79,191,176,0.3)':'rgba(160,148,240,0.2)';
+      html+='<div class="card" style="margin-bottom:8px;border-color:'+borderColor+';padding:16px 20px">'+
+        '<div style="display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap">'+
+          '<div style="flex:1;min-width:180px">'+
+            '<div style="font-size:.88em;font-weight:700;color:#f0ecff;line-height:1.45;margin-bottom:4px">'+(st==='done'?'<span style="opacity:.5;text-decoration:line-through">':'')+escRHtml(s.title)+(st==='done'?'</span>':'')+
+            (st==='done'?' <span style="font-size:.7em;font-family:Montserrat,sans-serif;font-weight:800;color:#4FBFB0;letter-spacing:.5px">✅ Used</span>':'')+'</div>'+
+            (s.notes?'<div style="font-size:.75em;color:var(--muted);font-weight:300;line-height:1.5">'+escRHtml(s.notes)+'</div>':'')+
+          '</div>'+
+          '<div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex-shrink:0">'+
+            '<button onclick="setSBStatus(\''+s.id+'\','+(st==='done'?'\'unused\'':'\'done\'')+'); renderStoryBank()" style="font-size:.68em;padding:5px 12px;background:'+(st==='done'?'rgba(79,191,176,0.15)':'rgba(123,111,212,0.15)')+';border:1px solid '+(st==='done'?'rgba(79,191,176,0.4)':'rgba(123,111,212,0.35)')+';color:'+(st==='done'?'#4FBFB0':'var(--p200)')+';border-radius:8px;cursor:pointer;white-space:nowrap;font-family:Montserrat,sans-serif;font-weight:800;letter-spacing:.4px">'+(st==='done'?'↩ Mark Unused':'✅ Mark Used')+'</button>'+
+            '<button onclick="sendStoryToVault(\''+s.id+'\')" style="font-size:.68em;padding:5px 12px;background:rgba(123,111,212,0.15);border:1px solid rgba(123,111,212,0.35);color:var(--p200);border-radius:8px;cursor:pointer;white-space:nowrap;font-family:Montserrat,sans-serif;font-weight:800;letter-spacing:.4px">→ Idea Vault</button>'+
+            '<button onclick="deleteStory(\''+s.id+'\')" style="font-size:.68em;padding:5px 10px;background:rgba(200,80,80,0.1);border:1px solid rgba(200,80,80,0.25);color:rgba(255,140,140,0.7);border-radius:8px;cursor:pointer;white-space:nowrap;font-family:Montserrat,sans-serif;font-weight:800;letter-spacing:.4px">🗑 Delete</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+    });
+  });
+  el.innerHTML=html;
+}
+
+function setSBStatus(id,status){ sbStatuses[id]=status; saveSBStatuses(sbStatuses); }
+
+function sendStoryToVault(id){
+  var allStories=STORY_LIBRARY_DEFAULT.concat(sbCustom);
+  var s=allStories.find(function(x){return x.id===id;}); if(!s)return;
+  ideas.unshift({
+    id:iuid(),
+    title:s.title,
+    cat:'youtube',
+    tags:['content'],
+    notes:s.notes||(s.pillar+' — from Story Bank'),
+    status:'new',
+    ts:Date.now()
+  });
+  saveIdeas(ideas);
+  setSBStatus(id,'done');
+  var pill=ge('savePill'); if(pill){pill.textContent='Sent to Idea Vault ✓';pill.classList.add('show');setTimeout(function(){pill.classList.remove('show');pill.textContent='Saved ✓';},2000);}
+}
+
+function addCustomStory(){
+  var title=gv('sbNewTitle'); if(!title.trim()){alert('Give the story a title first!');return;}
+  var pillar=gv('sbNewPillar')||'Personal';
+  var notes=gv('sbNewNotes');
+  var newStory={id:'c'+Date.now().toString(36),title:title.trim(),pillar:pillar,notes:notes.trim()};
+  sbCustom.push(newStory);
+  saveCustomStories(sbCustom);
+  sv('sbNewTitle',''); sv('sbNewNotes','');
+  renderStoryBank();
+}
+
+// CSS for new elements (injected at runtime)
+(function(){
+  var style=document.createElement('style');
+  style.textContent=`
+  .backlog-chip{
+    display:inline-flex;align-items:center;gap:4px;
+    background:rgba(123,111,212,0.18);
+    border:1.5px solid rgba(160,148,240,0.35);
+    border-radius:20px;padding:6px 12px;
+    font-size:.78em;font-weight:600;color:#f0ecff;
+    cursor:pointer;transition:all .18s;font-family:'Lato',sans-serif;
+  }
+  .backlog-chip:hover{background:rgba(123,111,212,0.35);border-color:var(--p400);}
+  `;
+  document.head.appendChild(style);
+})();
 </script>
 </body>
 </html>
