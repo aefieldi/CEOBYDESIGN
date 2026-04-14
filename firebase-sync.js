@@ -1,6 +1,7 @@
 // ════════════════════════════════════════════════════
 // FIREBASE CLOUD SYNC — CEO BY DESIGN · FOUNDER OS
-// Drop this file alongside your HTML on GitHub Pages.
+// PATCHED v2 — fixes flashing sync bar, adds persistence,
+// adds redirect fallback, guards against double-init.
 // ════════════════════════════════════════════════════
 
 const FIREBASE_CONFIG = {
@@ -12,98 +13,126 @@ const FIREBASE_CONFIG = {
   appId: "1:704510348100:web:a1701ffd81b4caac142511"
 };
 
-// ── All localStorage keys your app uses ──
 const SYNC_KEYS = [
-  'vbd_v4',           // Main data (profile + days)
-  'fos_dtq_v1',       // Daily Task Queue
-  'fos_tasks',        // Weekly Rhythm tasks
-  'fos_ideas',        // Idea Vault
-  'fos_snaps',        // Monthly Snapshots
-  'fos_weekreviews',  // Weekly Reviews
-  'fos_weektasks',    // Week Task List sidebar
-  'fos_backlog',      // Backlog Pool
-  'fos_deleted_ev',   // Deleted evening ideas
-  'sbs_video_ideas_v2' // Video Library
+  'vbd_v4','fos_dtq_v1','fos_tasks','fos_ideas','fos_snaps',
+  'fos_weekreviews','fos_weektasks','fos_backlog','fos_deleted_ev',
+  'sbs_video_ideas_v2'
 ];
-// Weekly check keys are dynamic (fos_checks_YYYY_WXX) — handled separately
 
 // ── State ──
-let fbApp = null;
-let fbDb = null;
-let fbAuth = null;
-let fbUser = null;
-let syncDebounceTimer = null;
-let isSyncing = false;
-let lastSyncTime = 0;
+let fbApp = null, fbDb = null, fbAuth = null, fbUser = null;
+let syncDebounceTimer = null, isSyncing = false, lastSyncTime = 0;
+let syncInitialized = false;   // NEW: prevents double-init
+let lastAuthState = 'unknown'; // NEW: only rebuild UI on actual state change
+let syncBarBuilt = false;      // NEW: build once, only update text after
 
 // ════════════════════════════════════════════════════
-// INIT
+// INIT — guarded against double-firing
 // ════════════════════════════════════════════════════
 function initFirebaseSync() {
-  // Wait for Firebase SDK to load
+  if (syncInitialized) return;                          // NEW guard
   if (typeof firebase === 'undefined') {
     console.warn('[Sync] Firebase SDK not loaded yet, retrying...');
     setTimeout(initFirebaseSync, 500);
     return;
   }
+  syncInitialized = true;
 
-  fbApp = firebase.initializeApp(FIREBASE_CONFIG);
-  fbDb = firebase.firestore();
-  fbAuth = firebase.auth();
+  try {
+    fbApp = firebase.apps.length ? firebase.app() : firebase.initializeApp(FIREBASE_CONFIG);
+    fbDb = firebase.firestore();
+    fbAuth = firebase.auth();
+  } catch (e) {
+    console.error('[Sync] Init failed:', e);
+    return;
+  }
 
-  // Build the auth UI
+  // ── CRITICAL: persist auth across page reloads ──
+  fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(err){
+    console.warn('[Sync] setPersistence failed:', err);
+  });
+
   buildSyncUI();
 
-  // Listen for auth state
-  fbAuth.onAuthStateChanged(function(user) {
-    fbUser = user;
-    updateSyncUI();
-    if (user) {
-      console.log('[Sync] Signed in as', user.email);
-      pullFromCloud();
+  // ── Handle redirect sign-in result (mobile / popup-blocked browsers) ──
+  fbAuth.getRedirectResult().then(function(result){
+    if (result && result.user) console.log('[Sync] Signed in via redirect');
+  }).catch(function(err){
+    if (err && err.code !== 'auth/no-auth-event') {
+      console.warn('[Sync] Redirect result error:', err);
     }
   });
 
-  // Override the original save function to also sync to cloud
-  patchSaveFunction();
+  // ── Auth state listener — only re-render UI on actual changes ──
+  fbAuth.onAuthStateChanged(function(user) {
+    fbUser = user;
+    var newState = user ? ('signed-in:' + user.uid) : 'signed-out';
+    if (newState !== lastAuthState) {
+      lastAuthState = newState;
+      updateSyncUI();
+      if (user) {
+        console.log('[Sync] Signed in as', user.email);
+        pullFromCloud();
+      }
+    }
+  });
 
+  patchSaveFunction();
   console.log('[Sync] Firebase sync initialized');
 }
 
 // ════════════════════════════════════════════════════
-// AUTH
+// AUTH — popup first, redirect fallback
 // ════════════════════════════════════════════════════
 function signInWithGoogle() {
   var provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+
   fbAuth.signInWithPopup(provider).catch(function(err) {
-    console.error('[Sync] Sign-in error:', err);
-    alert('Sign-in failed: ' + err.message);
+    console.warn('[Sync] Popup failed, trying redirect:', err && err.code);
+    // Common reasons popup fails: mobile browser, popup blocked,
+    // third-party cookies blocked. Redirect works in all of those.
+    if (err && (
+      err.code === 'auth/popup-blocked' ||
+      err.code === 'auth/popup-closed-by-user' ||
+      err.code === 'auth/cancelled-popup-request' ||
+      err.code === 'auth/operation-not-supported-in-this-environment' ||
+      err.code === 'auth/web-storage-unsupported'
+    )) {
+      fbAuth.signInWithRedirect(provider).catch(function(err2){
+        alert('Sign-in failed: ' + err2.message);
+      });
+    } else {
+      alert('Sign-in failed: ' + err.message);
+    }
   });
 }
 
 function signOutSync() {
   fbAuth.signOut().then(function() {
     fbUser = null;
+    lastAuthState = 'signed-out';
     updateSyncUI();
   });
 }
 
 // ════════════════════════════════════════════════════
-// UI — Sync bar at top of header
+// UI — build once, update text in place (no flashing)
 // ════════════════════════════════════════════════════
 function buildSyncUI() {
+  if (syncBarBuilt) return;
+  var existing = document.getElementById('syncBar');
+  if (existing) existing.remove();
+
   var bar = document.createElement('div');
   bar.id = 'syncBar';
-  bar.innerHTML = '';
   bar.style.cssText = 'text-align:center;padding:8px 16px;font-family:Montserrat,sans-serif;font-size:.72em;font-weight:700;letter-spacing:.5px;position:relative;z-index:101;background:rgba(20,14,55,0.85);border-bottom:1px solid rgba(160,148,240,0.15)';
 
-  // Insert before the momentum bar
   var mb = document.getElementById('momentumBar');
-  if (mb && mb.parentNode) {
-    mb.parentNode.insertBefore(bar, mb);
-  } else {
-    document.body.prepend(bar);
-  }
+  if (mb && mb.parentNode) mb.parentNode.insertBefore(bar, mb);
+  else document.body.prepend(bar);
+
+  syncBarBuilt = true;
   updateSyncUI();
 }
 
@@ -143,33 +172,28 @@ function timeSince(ts) {
   return Math.floor(secs / 3600) + 'h ago';
 }
 
-// Update the "last sync" text every 30s
 setInterval(function() {
   var el = document.getElementById('syncAgoText');
   if (el && lastSyncTime) el.textContent = timeSince(lastSyncTime);
 }, 30000);
 
 // ════════════════════════════════════════════════════
-// PATCH SAVE — Intercept the existing save() function
+// PATCH SAVE
 // ════════════════════════════════════════════════════
 function patchSaveFunction() {
-  // Store reference to the original save function
   if (typeof window.save === 'function' && !window._originalSave) {
     window._originalSave = window.save;
     window.save = function() {
-      // Call original save (writes to localStorage + shows pill)
       window._originalSave();
-      // Debounced cloud sync
       debouncedCloudSync();
     };
     console.log('[Sync] Patched save() function');
   }
 
-  // Also patch other save functions that don't go through save()
   var otherSavers = [
-    'saveRTasks', 'saveRChecks', 'saveIdeas', 'saveSnaps',
-    'saveWRs', 'saveWeekTasks', 'saveBacklog', 'saveDeletedEv',
-    'vlSave', 'dtqSave'
+    'saveRTasks','saveRChecks','saveIdeas','saveSnaps',
+    'saveWRs','saveWeekTasks','saveBacklog','saveDeletedEv',
+    'vlSave','dtqSave'
   ];
   otherSavers.forEach(function(fnName) {
     if (typeof window[fnName] === 'function' && !window['_orig_' + fnName]) {
@@ -184,26 +208,23 @@ function patchSaveFunction() {
 }
 
 // ════════════════════════════════════════════════════
-// CLOUD SYNC — Debounced push to Firestore
+// CLOUD SYNC
 // ════════════════════════════════════════════════════
 function debouncedCloudSync() {
   if (!fbUser) return;
   clearTimeout(syncDebounceTimer);
-  syncDebounceTimer = setTimeout(pushToCloud, 2000); // 2s debounce
+  syncDebounceTimer = setTimeout(pushToCloud, 2000);
 }
 
 function getAllLocalData() {
   var data = {};
   SYNC_KEYS.forEach(function(key) {
     var val = localStorage.getItem(key);
-    if (val) data[key] = val; // Store as raw strings
+    if (val) data[key] = val;
   });
-  // Grab dynamic weekly check keys
   for (var i = 0; i < localStorage.length; i++) {
     var k = localStorage.key(i);
-    if (k && k.startsWith('fos_checks_')) {
-      data[k] = localStorage.getItem(k);
-    }
+    if (k && k.startsWith('fos_checks_')) data[k] = localStorage.getItem(k);
   }
   return data;
 }
@@ -216,8 +237,6 @@ function pushToCloud() {
   data._updatedAt = firebase.firestore.FieldValue.serverTimestamp();
   data._email = fbUser.email;
 
-  // Firestore doc limit is 1MB — split into chunks if needed
-  // For a single-user planner this should be well under
   fbDb.collection('users').doc(fbUser.uid).set(data, { merge: true })
     .then(function() {
       lastSyncTime = Date.now();
@@ -244,17 +263,14 @@ function pullFromCloud() {
       var cloudData = doc.data();
       var localUpdated = false;
 
-      // For each key in cloud data, check if local is empty or older
       Object.keys(cloudData).forEach(function(key) {
-        if (key.startsWith('_')) return; // Skip metadata fields
+        if (key.startsWith('_')) return;
         var localVal = localStorage.getItem(key);
 
         if (!localVal || localVal === '{}' || localVal === '[]' || localVal === 'null') {
-          // Local is empty — use cloud data
           localStorage.setItem(key, cloudData[key]);
           localUpdated = true;
         } else if (key === 'vbd_v4') {
-          // Smart merge for main data — merge days
           try {
             var localDB = JSON.parse(localVal);
             var cloudDB = JSON.parse(cloudData[key]);
@@ -270,9 +286,7 @@ function pullFromCloud() {
               localDB.profile = cloudDB.profile;
               localUpdated = true;
             }
-            if (localUpdated) {
-              localStorage.setItem(key, JSON.stringify(localDB));
-            }
+            if (localUpdated) localStorage.setItem(key, JSON.stringify(localDB));
           } catch (e) {
             console.warn('[Sync] Merge error for vbd_v4:', e);
           }
@@ -283,12 +297,22 @@ function pullFromCloud() {
       updateSyncUI();
 
       if (localUpdated) {
-        console.log('[Sync] Merged cloud data into local — reloading');
-        // Reload the page to pick up merged data
-        location.reload();
+        console.log('[Sync] Merged cloud data into local — re-rendering (no reload)');
+        // NO auto-reload — this was causing infinite loops.
+        // Just re-render the app with the merged data.
+        try {
+          if (typeof window.DB !== 'undefined') {
+            window.DB = JSON.parse(localStorage.getItem('vbd_v4') || 'null') || window.DB;
+          }
+          if (typeof window.updateAll === 'function') window.updateAll();
+          if (typeof window.renderCB === 'function') window.renderCB();
+          if (typeof window.renderProgress === 'function') window.renderProgress();
+          showSyncNotice('☁️ Synced from cloud');
+        } catch (e) {
+          console.warn('[Sync] Re-render after merge failed:', e);
+        }
       } else {
         console.log('[Sync] Local data is current');
-        // Push local data to ensure cloud is up to date
         pushToCloud();
       }
     })
@@ -327,18 +351,15 @@ function forcePull() {
 }
 
 // ════════════════════════════════════════════════════
-// JSON BACKUP — Downloads everything as a file
+// BACKUP / RESTORE
 // ════════════════════════════════════════════════════
 function downloadBackup() {
   var data = {};
   for (var i = 0; i < localStorage.length; i++) {
     var key = localStorage.key(i);
     if (key) {
-      try {
-        data[key] = JSON.parse(localStorage.getItem(key));
-      } catch (e) {
-        data[key] = localStorage.getItem(key);
-      }
+      try { data[key] = JSON.parse(localStorage.getItem(key)); }
+      catch (e) { data[key] = localStorage.getItem(key); }
     }
   }
   var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -350,9 +371,6 @@ function downloadBackup() {
   showSyncNotice('💾 Backup downloaded');
 }
 
-// ════════════════════════════════════════════════════
-// RESTORE FROM BACKUP
-// ════════════════════════════════════════════════════
 function restoreFromBackup(jsonString) {
   try {
     var data = JSON.parse(jsonString);
@@ -367,9 +385,6 @@ function restoreFromBackup(jsonString) {
   }
 }
 
-// ════════════════════════════════════════════════════
-// HELPERS
-// ════════════════════════════════════════════════════
 function showSyncNotice(msg) {
   var pill = document.getElementById('savePill');
   if (pill) {
@@ -383,11 +398,10 @@ function showSyncNotice(msg) {
 }
 
 // ════════════════════════════════════════════════════
-// AUTO-INIT when DOM is ready
+// AUTO-INIT — only one path fires
 // ════════════════════════════════════════════════════
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initFirebaseSync);
 } else {
-  // Small delay to ensure the main app's save() is defined first
   setTimeout(initFirebaseSync, 300);
 }
